@@ -13,7 +13,7 @@ import java.util.List;
 public class XliffMapper {
 
     //Map xliff file to java XLIFF object
-    public static List<TransUnit> xliffMapper(MultipartFile file) throws JAXBException, IOException {
+    public  List<TransUnit> mapper(MultipartFile file) throws JAXBException, IOException {
         try (InputStream inputStream = file.getInputStream()) {
             JAXBContext context = JAXBContext.newInstance(Xliff.class);
             Unmarshaller unmarshaller = context.createUnmarshaller();
