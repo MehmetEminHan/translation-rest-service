@@ -3,6 +3,7 @@ package com.neuroval.translationApi.rest.xliffController;
 import com.neuroval.translationApi.model.XLIFF.TransUnit;
 import com.neuroval.translationApi.model.XLIFF.Xliff;
 import com.neuroval.translationApi.model.image.Image;
+import com.neuroval.translationApi.services.ComparisonOperations;
 import com.neuroval.translationApi.services.ImageOperations;
 import com.neuroval.translationApi.services.XliffOperations;
 import net.sourceforge.tess4j.TesseractException;
@@ -24,11 +25,14 @@ public class XliffController {
     private XliffOperations xliffOperations;
     @Autowired
     private ImageOperations imageOperations;
+    @Autowired
+    private ComparisonOperations comparisonOperations;
 
     @Autowired
     private Xliff xliff;
     @Autowired
     private Image image;
+
 
     // Upload xliff file and serialize it to java XLIFF object
     @PostMapping("/translation")
@@ -44,6 +48,12 @@ public class XliffController {
         }else{
             return imageOperations.extractTextFromImage(file, languageCode, image = new Image());
         }
+    }
+
+    // Send post request to learn is xliff end point awake
+    @GetMapping("/compare")
+    public List<String> compareImageTextAndXliffText() {
+        return comparisonOperations.compareXliffAndImage(image, xliff);
     }
 
     // Send post request to learn is xliff end point awake

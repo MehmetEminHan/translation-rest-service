@@ -10,12 +10,14 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class ImageOperations {
 
     public String extractTextFromImage(MultipartFile multipartFile, String languageCode, Image image) throws IOException, TesseractException {
-
         // Convert MultipartFile to File
         File tempFile = convertMultipartFileToFile(multipartFile);
 
@@ -32,6 +34,9 @@ public class ImageOperations {
 
         // Map the extracted text to Java object
         mapper(extractedText, image);
+
+        // Split the words
+        splitWords(extractedText, image);
 
         return extractedText;
     }
@@ -50,6 +55,20 @@ public class ImageOperations {
     public String mapper(String text, Image image){
         image.setText(text);
         return image.getText();
+    }
+
+    public List<String> splitWords(String text, Image image){
+
+        // Split the string by spaces
+        String[] wordsArray = text.split("\\s+");
+
+        // Convert array to ArrayList
+        List<String> wordsList = new ArrayList<>(Arrays.asList(wordsArray));
+
+        // Set image word list
+        image.setTextList(wordsList);
+
+        return wordsList;
     }
 
 
