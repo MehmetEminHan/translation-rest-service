@@ -1,5 +1,6 @@
 package com.neuroval.translationApi.services;
 
+import com.neuroval.translationApi.model.image.Image;
 import lombok.Data;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
@@ -13,7 +14,7 @@ import java.io.IOException;
 @Service
 public class ImageOperations {
 
-    public String extractTextFromImage(MultipartFile multipartFile, String languageCode) throws IOException, TesseractException {
+    public String extractTextFromImage(MultipartFile multipartFile, String languageCode, Image image) throws IOException, TesseractException {
 
         // Convert MultipartFile to File
         File tempFile = convertMultipartFileToFile(multipartFile);
@@ -29,6 +30,9 @@ public class ImageOperations {
         // Delete temp file after processing
         tempFile.delete();
 
+        // Map the extracted text to Java object
+        mapper(extractedText, image);
+
         return extractedText;
     }
 
@@ -42,5 +46,12 @@ public class ImageOperations {
 
         return tempFile;
     }
+
+    public String mapper(String text, Image image){
+        image.setText(text);
+        return image.getText();
+    }
+
+
 
 }
