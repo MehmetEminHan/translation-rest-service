@@ -14,7 +14,7 @@ This project is a **RESTful** web service developed using **Spring Boot** and **
 - Log4j 1.2.17
 
 ## Prerequisites
---------------->                 Will be added in the future!
+- Download tesseract in https://github.com/tesseract-ocr/tesseract
 
 ## Project Structure
 ```
