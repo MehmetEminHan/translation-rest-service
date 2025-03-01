@@ -2,9 +2,11 @@ package com.neuroval.translationApi.model.XLIFF;
 
 import jakarta.xml.bind.annotation.*;
 import lombok.Data;
+import org.springframework.stereotype.Component;
 
 @Data
 @XmlAccessorType(XmlAccessType.FIELD)
+@Component
 public class File {
     @XmlElement(name = "body")
     private Body body;
