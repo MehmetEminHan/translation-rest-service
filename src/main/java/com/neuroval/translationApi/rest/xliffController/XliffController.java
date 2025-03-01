@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import jakarta.xml.bind.JAXBException;
 
@@ -52,8 +54,12 @@ public class XliffController {
 
     // Send post request to learn is xliff end point awake
     @GetMapping("/compare")
-    public List<String> compareImageTextAndXliffText() {
-        return comparisonOperations.compareXliffAndImage(image, xliff);
+    public Map<String, Object> compareImageTextAndXliffText() {
+        Map<String, Object> response = new HashMap<>();
+        for(String text : comparisonOperations.compareXliffAndImage(image, xliff)){
+            response.put("text", text);
+        }
+        return response;
     }
 
     // Send post request to learn is xliff end point awake

@@ -10,6 +10,7 @@ import java.util.List;
 @Service
 public class ComparisonOperations {
 
+    // Compare serialized XLIFF file and serialized uploaded screenshot and return non-matched words
     public List<String> compareXliffAndImage(Image image, Xliff xliff){
         List<String> transUnitTargetLanguageList = new ArrayList<>();
         List<String> differenceBetweenImageAndXliff = new ArrayList<>();
@@ -26,7 +27,13 @@ public class ComparisonOperations {
         // Remove the same words and collect the unmatched words in the Array
         transUnitTargetLanguageList.removeAll(image.getTextList());
 
+        // Check if the trans unit target language list is empty return that
+        if(transUnitTargetLanguageList.isEmpty()){
+            transUnitTargetLanguageList.add("All words are matched! congrats!");
+        }
 
         return transUnitTargetLanguageList;
     }
 }
+
+
