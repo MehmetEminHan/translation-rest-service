@@ -44,21 +44,33 @@ public class XliffController {
 
     // Upload the image that has text and serialize the text to Java String
     @PostMapping("/image")
-    public String uploadImage(@RequestParam("file") MultipartFile file, @RequestHeader("LanguageCode") String languageCode) throws IOException, TesseractException {
+    public Map<String, Object> uploadImage(@RequestParam("file") MultipartFile file, @RequestHeader("LanguageCode") String languageCode) throws IOException, TesseractException {
+
+        Map<String, Object> response = new HashMap<>();
+
         if (xliff.getFile() == null){
-            return "Please send first a xliff file to \"neuroval/translatition/validation/xliff/upload/translation\"";
+            response.put("status", "error");
+            response.put("text", "\"Please send first a xliff file to \\\"neuroval/translatition/validation/xliff/upload/translation\\\"\"");
         }else{
-            return imageOperations.extractTextFromImage(file, languageCode, image = new Image());
+            response.put("status", "successful");
+            response.put("extracted-text", imageOperations.extractTextFromImage(file, languageCode, image = new Image()));
         }
+        return response;
     }
 
     // Send post request to learn is xliff end point awake
     @GetMapping("/compare")
     public Map<String, Object> compareImageTextAndXliffText() {
         Map<String, Object> response = new HashMap<>();
-        for(String text : comparisonOperations.compareXliffAndImage(image, xliff)){
-            response.put("text", text);
+
+        if ( comparisonOperations.compareXliffAndImage(image, xliff).toString().isEmpty()){
+            response.put("status", "pass");
+            response.put("message", "all words are matched!");
+        }else{
+            response.put("status", "failed");
+            response.put("un-matched-words", comparisonOperations.compareXliffAndImage(image, xliff).toString());
         }
+
         return response;
     }
 
