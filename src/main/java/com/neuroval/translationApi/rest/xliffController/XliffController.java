@@ -76,7 +76,9 @@ public class XliffController {
 
     // Send post request to learn is xliff end point awake
     @PostMapping("/isAwake")
-    public String isAwake() {
-        return "xliff api is awake";
+    public  Map<String, Object> isAwake() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "successful");
+        return response;
     }
 }
