@@ -1,10 +1,8 @@
-package com.neuroval.translationApi.services;
+package com.neuroval.translationApi.services.xliff;
 
 import com.neuroval.translationApi.model.image.Image;
-import lombok.Data;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
-import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.File;

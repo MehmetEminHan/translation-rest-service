@@ -1,4 +1,4 @@
-package com.neuroval.translationApi.model.XLIFF;
+package com.neuroval.translationApi.model.xliff;
 
 import jakarta.xml.bind.annotation.*;
 import lombok.Data;
