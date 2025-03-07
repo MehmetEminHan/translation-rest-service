@@ -11,7 +11,7 @@
 	</parent>
 
 	<groupId>com.neuroval</groupId>
-	<artifactId>translationApi</artifactId>
+	<artifactId>translation-rest-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>translationApi</name>
 	<description>Demo project for Spring Boot</description>
