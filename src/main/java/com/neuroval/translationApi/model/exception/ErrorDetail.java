@@ -3,6 +3,7 @@ package com.neuroval.translationApi.model.exception;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 
 import java.time.LocalDateTime;
@@ -18,5 +19,14 @@ public class ErrorDetail {
         this.timestamp = LocalDateTime.now();
         this.statusCode = statusCode;
         this.message = message;
+    }
+
+    @Override
+    public String toString() {
+        return "ErrorDetail{" +
+                "timestamp=" + timestamp +
+                ", statusCode=" + statusCode +
+                ", message='" + message + '\'' +
+                '}';
     }
 }

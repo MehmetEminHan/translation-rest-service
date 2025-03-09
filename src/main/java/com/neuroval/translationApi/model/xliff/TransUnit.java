@@ -21,6 +21,15 @@ public class TransUnit {
     //Attributes
     @XmlAnyAttribute
     private Map<QName, String> otherAttributes;
+
+    @Override
+    public String toString() {
+        return "TransUnit{" +
+                "source='" + source + '\'' +
+                ", target='" + target + '\'' +
+                ", otherAttributes=" + otherAttributes +
+                '}';
+    }
 }
 
 
