@@ -40,5 +40,6 @@ translationApi/
 |--------|-------------------------------------------------------------|----------------------------------------------------------|
 | POST   | /neuroval/translatition/validation/xliff/upload/image       | Detect text from image and serialize them to Java object |
 | POST   | /neuroval/translatition/validation/xliff/upload/translation | Serialize translation XLIFF file                         |
-| GET    | /neuroval/translatition/validation/xliff/upload/compare     | Compare serialized translation file and uploaded image    |
+| GET    | /neuroval/translatition/validation/xliff/upload/compare     | Compare serialized translation file and uploaded image   |
+| POST   | /neuroval/translatition/validation/xliff/upload/isAwake     | Returns status of the endpoint                           |
 

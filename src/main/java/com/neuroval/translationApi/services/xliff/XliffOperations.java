@@ -1,7 +1,7 @@
-package com.neuroval.translationApi.services;
+package com.neuroval.translationApi.services.xliff;
 
-import com.neuroval.translationApi.model.XLIFF.TransUnit;
-import com.neuroval.translationApi.model.XLIFF.Xliff;
+import com.neuroval.translationApi.model.xliff.TransUnit;
+import com.neuroval.translationApi.model.xliff.Xliff;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
@@ -15,7 +15,7 @@ import java.util.List;
 @Service
 public class XliffOperations {
     //Map xliff file to java XLIFF object
-    public  List<TransUnit> mapper(MultipartFile file, Xliff xliff) throws JAXBException, IOException {
+    public  List<TransUnit> mapper(MultipartFile file, Xliff xliff) throws IOException {
         try (InputStream inputStream = file.getInputStream()) {
             JAXBContext context = JAXBContext.newInstance(Xliff.class);
             Unmarshaller unmarshaller = context.createUnmarshaller();
