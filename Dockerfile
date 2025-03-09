@@ -12,6 +12,10 @@ WORKDIR /app
 # Copy your entire project into the container
 COPY . .
 
+RUN apt-get update && apt-get install -y dos2unix
+RUN dos2unix ./mvnw
+
+RUN chmod +x ./mvnw
 # Build the project (this will create the target/ directory inside the container)
 RUN ./mvnw clean install
 
