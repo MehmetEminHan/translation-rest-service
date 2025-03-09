@@ -20,4 +20,10 @@ public class GlobalExceptionHandler {
         ErrorDetail errorDetail = new ErrorDetail(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
         return  new ResponseEntity<>(errorDetail, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(CorruptedFileException.class)
+    public ResponseEntity<ErrorDetail> handleCorruptedFileException(CorruptedFileException ex) {
+        ErrorDetail errorDetail = new ErrorDetail(HttpStatus.BAD_REQUEST.value(), ex.getMessage());
+        return new ResponseEntity<>(errorDetail, HttpStatus.BAD_REQUEST);
+    }
 }

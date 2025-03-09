@@ -1,5 +1,6 @@
 package com.neuroval.translationApi.rest.xliff;
 
+import com.neuroval.translationApi.services.exception.CorruptedFileException;
 import com.neuroval.translationApi.services.exception.InvalidFileTypeException;
 import com.neuroval.translationApi.model.xliff.TransUnit;
 import com.neuroval.translationApi.model.xliff.Xliff;
@@ -19,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.xml.bind.JAXBException;
+
+import javax.imageio.IIOException;
 
 
 @RestController
@@ -60,26 +63,30 @@ public class XliffController {
 
     /**
      * Handles the upload of an image file containing text and extracts the text, converting it into a Java String.
-     * @param file
+     * @param imageFile
      * @param languageCode
      * @return  Map<String, Object> representing the extracted text from image as String or throw an exceptions below if processing fails.
      * @throws IOException
      * @throws TesseractException
      */
     @PostMapping("/image")
-    public Map<String, Object> uploadImage(@RequestParam("file") MultipartFile file, @RequestHeader("LanguageCode") String languageCode) throws IOException, TesseractException {
+    public Map<String, Object> uploadImage(@RequestParam("image") MultipartFile imageFile, @RequestHeader("LanguageCode") String languageCode) throws IOException, TesseractException {
         Map<String, Object> response = new HashMap<>(); // Create response map
 
-        fileFormat = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")); // Set sent file format by user
+        fileFormat = imageFile.getOriginalFilename().substring(imageFile.getOriginalFilename().lastIndexOf(".")); // Set sent file format by user
 
         if (xliff.getFile() == null){
             throw new MissingXliffException(); // Throw a Missing file exception if user didn't upload any .xliff file
         }else{
             if (fileFormat.toLowerCase().equals(".png")){
-                throw new InvalidFileTypeException(fileFormat); // Throw an Invalid File Type Exception if user try to upload file format different then .png
+                try {
+                    response.put("status", "successful"); // Set response status as successful
+                    response.put("extracted-text", imageOperations.extractTextFromImage(imageFile, languageCode, image = new Image())); // Set extracted-text response with extracted text from uploaded image
+                }catch (Exception e){
+                    throw new CorruptedFileException(e.getMessage());
+                }
             }else{
-                response.put("status", "successful"); // Set response status as successful
-                response.put("extracted-text", imageOperations.extractTextFromImage(file, languageCode, image = new Image())); // Set extracted-text response with extracted text from uploaded image
+                throw new InvalidFileTypeException(fileFormat); // Throw an Invalid File Type Exception if user try to upload file format different then .png
             }
         }
         return response;

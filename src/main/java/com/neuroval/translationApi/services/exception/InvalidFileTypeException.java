@@ -4,6 +4,6 @@ import com.neuroval.translationApi.model.exception.ErrorMessage;
 
 public class InvalidFileTypeException extends RuntimeException {
     public InvalidFileTypeException(String uploadedFileFormat) {
-        super(ErrorMessage.INVALID_FILE_TYPE_1.getMessage() + uploadedFileFormat + ErrorMessage.INVALID_FILE_TYPE_2.getMessage());
+        super(ErrorMessage.INVALID_FILE_TYPE_1.getMessage() + uploadedFileFormat);
     }
 }

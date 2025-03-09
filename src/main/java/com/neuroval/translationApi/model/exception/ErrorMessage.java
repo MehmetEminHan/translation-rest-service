@@ -6,6 +6,8 @@ import lombok.Getter;
 public enum ErrorMessage {
     INVALID_FILE_TYPE_1("Invalid file: "),
     INVALID_FILE_TYPE_2(", please upload .xliff file!"),
+    INVALID_FILE_TYPE_3(", please upload .png file!"),
+    CURROPTED_PNG_FILE("Uploaded .png file is corrupted, please upload .png file!"),
     MISSING_XLIFF("Please send first a xliff file to: neuroval/translatition/validation/xliff/upload/translation");
 
 
