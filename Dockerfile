@@ -1,5 +1,5 @@
 # Use a lightweight Java image
-FROM openjdk:17-jdk-slim
+FROM openjdk:21-jdk-slim
 
 # Install Tesseract OCR
 RUN apt-get update && \
