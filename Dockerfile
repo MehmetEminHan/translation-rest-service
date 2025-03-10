@@ -1,16 +1,21 @@
-# Use a lightweight Java image
+# Build stage
+FROM maven:3.9.8-eclipse-temurin-21 AS build
+COPY . .
+RUN mvn clean package -DskipTests
+
+# Install Tesseract 5.5.0 from GitHub
 FROM openjdk:21-jdk-slim
 
-# Install Tesseract OCR
+# Install Tesseract OCR and Spanish language package (and other dependencies)
 RUN apt-get update && \
-    apt-get install -y tesseract-ocr && \
-    apt-get clean
+    apt-get install -y tesseract-ocr tesseract-ocr-spa && \
+    rm -rf /var/lib/apt/lists/*
 
-# Set the working directory
-WORKDIR /app
+# Copy the built jar file from the build stage
+COPY --from=build /target/translation-rest-service-0.0.1-SNAPSHOT.jar translation-rest-service.jar
 
-# Copy the JAR file to the container
-COPY target/translation-rest-service-0.0.1-SNAPSHOT.jar app.jar
+# Expose port 8080
+EXPOSE 8080
 
-# Run the Spring Boot app
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Run the Spring Boot application
+ENTRYPOINT ["java", "-jar", "translation-rest-service.jar"]
