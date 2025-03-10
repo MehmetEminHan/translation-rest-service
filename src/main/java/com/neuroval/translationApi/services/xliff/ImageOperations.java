@@ -23,7 +23,7 @@ public class ImageOperations {
         // Initialize Tesseracts
         Tesseract tesseract = new Tesseract();
         //tesseract.setDatapath("C:/Program Files/Tesseract-OCR/tessdata"); // Set Tesseract data path windows
-        tesseract.setDatapath("/usr/share/tesseract-ocr/4.00/tessdata");
+        tesseract.setDatapath("/usr/share/tesseract-ocr/5/tessdata");
         tesseract.setLanguage(languageCode); // Set language
 
         // Perform OCR
