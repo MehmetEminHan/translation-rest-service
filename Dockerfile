@@ -1,26 +1,25 @@
-# Use Java 21 image
+# Use a Java 21 image as the base image
 FROM openjdk:21-jdk-slim
 
-# Install Maven (to build the app in the container)
+# Install Maven and Tesseract (if needed)
 RUN apt-get update && \
     apt-get install -y maven tesseract-ocr && \
     apt-get clean
 
-# Set the working directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy your entire project into the container
+# Copy the entire project into the container
 COPY . .
 
-RUN apt-get update && apt-get install -y dos2unix
-RUN dos2unix ./mvnw
-
-RUN chmod +x ./mvnw
-# Build the project (this will create the target/ directory inside the container)
+# Run Maven to build the project inside the container
 RUN ./mvnw clean install
 
-# Copy the JAR file to the container
-COPY target/translation-rest-service-0.0.1-SNAPSHOT.jar app.jar
+# Check that the build was successful by copying the .jar file
+RUN ls -l target/
 
-# Run the Spring Boot app
+# Copy the generated .jar file to the container
+COPY target/translation-rest-service-0.0.1-SNAPSHOT.jar translation-rest-service.jar
+
+# Run the Spring Boot application
 ENTRYPOINT ["java", "-jar", "app.jar"]
