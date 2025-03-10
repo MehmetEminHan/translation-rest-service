@@ -8,7 +8,7 @@ FROM openjdk:21-jdk-slim
 
 # Install Tesseract OCR
 RUN apt-get update && \
-    apt-get install -y tesseract-ocr && \
+    apt-get install -y tesseract-ocr tesseract-ocr-all && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy the built jar file from the build stage
