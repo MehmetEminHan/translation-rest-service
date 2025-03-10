@@ -85,12 +85,12 @@ public class XliffController {
 
         fileFormat = imageFile.getOriginalFilename().substring(imageFile.getOriginalFilename().lastIndexOf(".")); // Get file format and set to fileFormat
 
-        extractedText = imageOperations.extractTextFromImage(imageFile, languageCode, image = new Image());
         if (xliff.getFile() == null){
             throw new MissingXliffException(); // Throw a Missing file exception if user didn't upload any .xliff file
         }else{
             if (fileFormat.toLowerCase().equals(".png")){
                 try {
+                    extractedText = imageOperations.extractTextFromImage(imageFile, languageCode, image = new Image());
                     response.put("status", "successful"); // Set response status as successful
                     response.put("extracted-text", extractedText); // Set extracted-text response with extracted text from uploaded image
 
