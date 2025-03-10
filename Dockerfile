@@ -11,7 +11,8 @@
      apt-get install -y tesseract-ocr && \
      rm -rf /var/lib/apt/lists/*
 
- RUN apt-get install -y tesseract-ocr-eng tesseract-ocr-deu tesseract-ocr-spa
+# Install specific languages (replace 'eng', 'deu', 'fra' with desired languages)
+ RUN apt-get install -y tesseract-ocr-spa
 
  # Copy the built jar file from the build stage
  COPY --from=build /target/translation-rest-service-0.0.1-SNAPSHOT.jar translation-rest-service.jar
