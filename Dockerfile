@@ -11,11 +11,12 @@ RUN apt-get update && \
     apt-get install -y tesseract-ocr tesseract-ocr-all && \
     rm -rf /var/lib/apt/lists/*
 
+# Check if the tessdata directory exists and list the contents
+RUN echo "Checking if tessdata directory exists..." && \
+    find /usr/share/tesseract-ocr/4.00/ -type d
+
 # Set TESSDATA_PREFIX environment variable
 ENV TESSDATA_PREFIX=/usr/share/tesseract-ocr/4.00/
-
-# Verify that the tessdata directory exists
-RUN ls -l /usr/share/tesseract-ocr/4.00/tessdata/
 
 # Copy the built jar file from the build stage
 COPY --from=build /target/translation-rest-service-0.0.1-SNAPSHOT.jar translation-rest-service.jar
