@@ -1,4 +1,4 @@
-package com.neuroval.translationApi.services.xliff;
+package com.neuroval.translationApi.services.image;
 
 import com.neuroval.translationApi.model.image.Image;
 import net.sourceforge.tess4j.Tesseract;
