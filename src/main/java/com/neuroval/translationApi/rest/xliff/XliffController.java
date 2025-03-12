@@ -7,7 +7,7 @@ import com.neuroval.translationApi.model.xliff.Xliff;
 import com.neuroval.translationApi.model.image.Image;
 import com.neuroval.translationApi.services.exception.MissingXliffException;
 import com.neuroval.translationApi.services.xliff.ComparisonOperations;
-import com.neuroval.translationApi.services.xliff.ImageOperations;
+import com.neuroval.translationApi.services.image.ImageOperations;
 import com.neuroval.translationApi.services.xliff.XliffOperations;
 import net.sourceforge.tess4j.TesseractException;
 import org.apache.logging.log4j.LogManager;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
