@@ -113,7 +113,7 @@ public class XliffController {
 
         fileFormat = imageFile.getOriginalFilename().substring(imageFile.getOriginalFilename().lastIndexOf(".")); // Get file format and set to fileFormat
 
-        if (xliff.getFile() == null){
+        if (xliff.getFile() == null && xliff_1_2 == null && xliff_2_0 == null){
             throw new MissingXliffException(); // Throw a Missing file exception if user didn't upload any .xliff file
         }else{
             if (fileFormat.toLowerCase().equals(".png")){
