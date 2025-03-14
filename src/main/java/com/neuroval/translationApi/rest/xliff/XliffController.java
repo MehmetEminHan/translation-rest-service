@@ -1,5 +1,9 @@
 package com.neuroval.translationApi.rest.xliff;
 
+import com.neuroval.translationApi.model.xliff.xliff_1_2.TransUnit_1_2;
+import com.neuroval.translationApi.model.xliff.xliff_1_2.Xliff_1_2;
+import com.neuroval.translationApi.model.xliff.xliff_2_0.TransUnit_2_0;
+import com.neuroval.translationApi.model.xliff.xliff_2_0.Xliff_2_0;
 import com.neuroval.translationApi.services.exception.CorruptedFileException;
 import com.neuroval.translationApi.services.exception.InvalidFileTypeException;
 import com.neuroval.translationApi.model.xliff.TransUnit;
@@ -39,13 +43,19 @@ public class XliffController {
     @Autowired
     private Xliff xliff;
     @Autowired
+    private Xliff_1_2 xliff_1_2;
+    @Autowired
+    private Xliff_2_0 xliff_2_0;
+    @Autowired
     private Image image;
 
     private String fileFormat;
     private List<TransUnit> deserializedXliff;
+    private List<TransUnit_1_2> deserializedXliff_1_2;
+    private List<TransUnit_2_0> deserializedXliff_2_0;
     private String extractedText;
     private static final Logger logger = LogManager.getLogger(XliffController.class);
-
+    private String xliffFileNamespace;
 
     /**
      * Handles the upload of an XLIFF file and converts it into a Java XLIFF object.
@@ -55,19 +65,38 @@ public class XliffController {
      * @throws JAXBException
      */
     @PostMapping("/translation")
-    public List<TransUnit> uploadXliff(@RequestParam("file") MultipartFile file) throws IOException, JAXBException {
-        fileFormat = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")); // Get file format and set to fileFormat
+    public List<?> uploadXliff(@RequestParam("file") MultipartFile file) throws IOException, JAXBException {
 
-        deserializedXliff = xliffOperations.mapper(file, xliff); // de-serialize the xliff file to java object
+        fileFormat = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")); // Get file format and set to fileFormat
+        xliffFileNamespace = xliffOperations.isThereNamespace(file);
 
         if (fileFormat.toLowerCase().equals(".xliff")){
+            try{
+                if (xliffFileNamespace.equals("urn:oasis:names:tc:xliff:document:1.2")){
+                    deserializedXliff_1_2 = xliffOperations.mapper_1_2(file,xliff_1_2);
+                    logger.info(deserializedXliff_1_2);
+                    return deserializedXliff_1_2;
+                } else if (xliffFileNamespace.equals("")) {
+                    deserializedXliff = xliffOperations.mapper(file,xliff);
+                    logger.info(deserializedXliff);
+                    System.out.println("test");
+                    return deserializedXliff;
+                }else if(xliffFileNamespace.equals("urn:oasis:names:tc:xliff:document:2.0")){
+                    deserializedXliff_2_0 = xliffOperations.mapper_2_0(file,xliff_2_0);
+                    logger.info(deserializedXliff_2_0);
+                    System.out.println("test");
+                    return deserializedXliff_2_0;
+                }
+            }catch (NullPointerException e){
+                logger.error(e);
+            }
             logger.info("Uploaded Xliff file mapped to java object");
-            logger.info(deserializedXliff);
 
-            return deserializedXliff ; // Return mapped xliff file
+            return deserializedXliff;
         }else{
             throw new InvalidFileTypeException(fileFormat); // Throw an Invalid File Type Exception if user try to upload file format different then .xliff
         }
+        //deserializedXliff = xliffOperations.mapper(file, xliff); // de-serialize the xliff file to java object
     }
 
     /**
@@ -79,12 +108,12 @@ public class XliffController {
      * @throws TesseractException
      */
     @PostMapping("/image")
-    public Map<String, Object> uploadImage(@RequestParam("image") MultipartFile imageFile, @RequestHeader("LanguageCode") String languageCode) throws IOException, TesseractException {
+    public Map<String, Object> uploadImage(@RequestParam("image") MultipartFile imageFile, @RequestHeader("LanguageCode") String languageCode) throws IOException {
         Map<String, Object> response = new HashMap<>(); // Create response map
 
         fileFormat = imageFile.getOriginalFilename().substring(imageFile.getOriginalFilename().lastIndexOf(".")); // Get file format and set to fileFormat
 
-        if (xliff.getFile() == null){
+        if (xliff.getFile() == null && xliff_1_2 == null && xliff_2_0 == null){
             throw new MissingXliffException(); // Throw a Missing file exception if user didn't upload any .xliff file
         }else{
             if (fileFormat.toLowerCase().equals(".png")){

@@ -20,10 +20,19 @@ public class ImageOperations {
         // Convert MultipartFile to File
         File tempFile = convertMultipartFileToFile(multipartFile);
 
+        // Get the os name
+        String osName = System.getProperty("os.name");
+
         // Initialize Tesseracts
         Tesseract tesseract = new Tesseract();
-        tesseract.setDatapath("C:/Program Files/Tesseract-OCR/tessdata"); // Set Tesseract data path windows
-        //tesseract.setDatapath("/usr/share/tesseract-ocr/5/tessdata");
+
+        // Assign tesseract datapath based on OS system
+        if(osName.toLowerCase().contains("windows")) {
+            tesseract.setDatapath("C:/Program Files/Tesseract-OCR/tessdata"); // Set Tesseract data path windows
+        }else if(osName.toLowerCase().contains("linux")) {
+            tesseract.setDatapath("/usr/share/tesseract-ocr/5/tessdata"); // Set Tesseract data path ubuntu
+        }
+
         tesseract.setLanguage(languageCode); // Set language
 
         // Perform OCR
