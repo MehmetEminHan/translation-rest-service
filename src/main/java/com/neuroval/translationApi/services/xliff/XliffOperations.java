@@ -6,10 +6,12 @@ import com.neuroval.translationApi.model.xliff.xliff_1_2.TransUnit_1_2;
 import com.neuroval.translationApi.model.xliff.xliff_1_2.Xliff_1_2;
 import com.neuroval.translationApi.model.xliff.xliff_2_0.TransUnit_2_0;
 import com.neuroval.translationApi.model.xliff.xliff_2_0.Xliff_2_0;
+import com.neuroval.translationApi.services.log.Log;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 import lombok.Data;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
@@ -25,6 +27,8 @@ import javax.xml.stream.XMLStreamReader;
 @Data
 public class XliffOperations {
 
+    private static final Logger logger = Log.getLogger(XliffOperations.class);  // Logger initialized for this class only once
+
     // Map xliff file to java XLIFF object
     public  List<TransUnit> mapper(MultipartFile file, Xliff xliff) throws IOException {
         try (InputStream inputStream = file.getInputStream()) {
@@ -33,6 +37,7 @@ public class XliffOperations {
 
             // Parse XLIFF XML from uploaded file
             Xliff xliff2 = (Xliff) unmarshaller.unmarshal(inputStream);
+            logger.info(xliff2.toString());
 
             // Serialize the mapped xliff2 object to xliff java object
             xliff.setFile(xliff2.getFile());
@@ -61,6 +66,7 @@ public class XliffOperations {
 
             // Unmarshal the XLIFF XML file into Java objects
             Xliff_1_2 xliff_1_2v2 = (Xliff_1_2) context.createUnmarshaller().unmarshal(reader);
+            logger.info(xliff_1_2v2.toString());
 
             // Serialize the mapped xliff2 object to the xliff Java object
             xliff_1_2.setFile(xliff_1_2v2.getFile());
@@ -91,6 +97,7 @@ public class XliffOperations {
 
             // Unmarshal the XLIFF XML file into Java objects
             Xliff_2_0 xliff_2_0v2 = (Xliff_2_0) context.createUnmarshaller().unmarshal(reader);
+            logger.info(xliff_2_0v2.toString());
 
             // Serialize the mapped xliff2 object to the xliff Java object
             xliff_2_0.setFile(xliff_2_0v2.getFile());
@@ -99,8 +106,10 @@ public class XliffOperations {
             return xliff_2_0.getFile().getBody().getTransUnitList();
 
         } catch (JAXBException e) {
+            logger.error(e.getMessage(), e); // log error detail
             throw new RuntimeException("Failed to parse XLIFF file", e);
         } catch (Exception e) {
+            logger.error(e.getMessage(), e); // log error detail
             throw new RuntimeException("Error unmarshalling XLIFF", e);
         }
     }
@@ -121,6 +130,8 @@ public class XliffOperations {
                 }
             }
 
+            logger.info("Xliff file namespace is: {}", namespace);
+
             // Handle if namespace is null
             if (namespace == null) {
                 namespace = "";
@@ -128,6 +139,7 @@ public class XliffOperations {
 
             return namespace;
     } catch (XMLStreamException e) {
+            logger.error(e.getMessage(), e); // log error detail
             throw new RuntimeException(e);
         }
     }

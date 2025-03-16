@@ -1,8 +1,10 @@
 package com.neuroval.translationApi.services.image;
 
 import com.neuroval.translationApi.model.image.Image;
+import com.neuroval.translationApi.services.log.Log;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
@@ -15,6 +17,8 @@ import java.util.List;
 @Service
 public class ImageOperations {
 
+    private static final Logger logger = Log.getLogger(ImageOperations.class);  // Logger initialized for this class only once
+
     // Extract text from the image using tesseract
     public String extractTextFromImage(MultipartFile multipartFile, String languageCode, Image image) throws IOException, TesseractException {
         // Convert MultipartFile to File
@@ -22,6 +26,7 @@ public class ImageOperations {
 
         // Get the os name
         String osName = System.getProperty("os.name");
+        logger.info("Detected OS Name is: {}", osName);
 
         // Initialize Tesseracts
         Tesseract tesseract = new Tesseract();
@@ -33,10 +38,13 @@ public class ImageOperations {
             tesseract.setDatapath("/usr/share/tesseract-ocr/5/tessdata"); // Set Tesseract data path ubuntu
         }
 
+
         tesseract.setLanguage(languageCode); // Set language
+        logger.info("Tesseract language set to {}", languageCode);
 
         // Perform OCR
         String extractedText = tesseract.doOCR(tempFile);
+        logger.info("Extracted text from image is: {}", extractedText);
 
         // Delete temp file after processing
         tempFile.delete();
@@ -65,6 +73,8 @@ public class ImageOperations {
     // Map the extracted text to Image JAVA object
     public String mapper(String text, Image image){
         image.setText(text);
+        logger.info("Extracted text deserialized to imageText:", image.getText());
+
         return image.getText();
     }
 
@@ -75,6 +85,8 @@ public class ImageOperations {
 
         // Convert array to ArrayList
         List<String> wordsList = new ArrayList<>(Arrays.asList(wordsArray));
+
+        logger.info("Split words: {}", wordsList);
 
         // Set image word list
         image.setTextList(wordsList);
