@@ -1,0 +1,30 @@
+package com.neuroval.translationApi.rest.comparison;
+
+import com.neuroval.translationApi.services.comparison.ComparisonOperations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@RestController
+@RequestMapping("neuroval/translation/validation/comparison")
+public class ComparisonController {
+
+    @Autowired
+    private ComparisonOperations comparisonOperations;
+
+    /**
+     * Handles the upload of an image file and an XLIFF file, extracts text from the image, and compares it with the XLIFF content to identify unmatched words.
+     * @return Map<String, Object> if they match return successful or containing a <String> of unmatched words with an error message if processing fails.
+     */
+    @GetMapping("/compare")
+    public Map<String,Object> compareImageTextAndXliffText() {
+        Map<String, Object> response = new HashMap<>(); // Create response map
+        response.put("status", "OK");
+        response.put("Comparison",comparisonOperations.compareXliffAndImage());
+        return response;
+    }
+}

@@ -1,19 +1,19 @@
 package com.neuroval.translationApi.rest.xliff;
 
+import com.neuroval.translationApi.model.comparison.Comparison;
 import com.neuroval.translationApi.model.xliff.xliff_1_2.TransUnit_1_2;
 import com.neuroval.translationApi.model.xliff.xliff_1_2.Xliff_1_2;
 import com.neuroval.translationApi.model.xliff.xliff_2_0.TransUnit_2_0;
 import com.neuroval.translationApi.model.xliff.xliff_2_0.Xliff_2_0;
-import com.neuroval.translationApi.services.exception.CorruptedFileException;
 import com.neuroval.translationApi.services.exception.InvalidFileTypeException;
 import com.neuroval.translationApi.model.xliff.TransUnit;
 import com.neuroval.translationApi.model.xliff.Xliff;
 import com.neuroval.translationApi.model.image.Image;
-import com.neuroval.translationApi.services.exception.MissingXliffException;
-import com.neuroval.translationApi.services.xliff.ComparisonOperations;
+import com.neuroval.translationApi.services.comparison.ComparisonOperations;
 import com.neuroval.translationApi.services.image.ImageOperations;
 import com.neuroval.translationApi.services.xliff.XliffOperations;
-import net.sourceforge.tess4j.TesseractException;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,9 @@ import jakarta.xml.bind.JAXBException;
 
 
 @RestController
-@RequestMapping("neuroval/translatition/validation/xliff/upload")
+@Getter
+@Setter
+@RequestMapping("neuroval/translation/validation/xliff")
 public class XliffController {
 
     @Autowired
@@ -39,6 +41,8 @@ public class XliffController {
     private ImageOperations imageOperations;
     @Autowired
     private ComparisonOperations comparisonOperations;
+    @Autowired
+    private Comparison comparison;
 
     @Autowired
     private Xliff xliff;
@@ -57,6 +61,7 @@ public class XliffController {
     private static final Logger logger = LogManager.getLogger(XliffController.class);
     private String xliffFileNamespace;
 
+
     /**
      * Handles the upload of an XLIFF file and converts it into a Java XLIFF object.
      * @param file
@@ -64,7 +69,7 @@ public class XliffController {
      * @throws IOException
      * @throws JAXBException
      */
-    @PostMapping("/translation")
+    @PostMapping("/upload")
     public List<?> uploadXliff(@RequestParam("file") MultipartFile file) throws IOException, JAXBException {
 
         fileFormat = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")); // Get file format and set to fileFormat
@@ -73,86 +78,39 @@ public class XliffController {
         if (fileFormat.toLowerCase().equals(".xliff")){
             try{
                 if (xliffFileNamespace.equals("urn:oasis:names:tc:xliff:document:1.2")){
-                    deserializedXliff_1_2 = xliffOperations.mapper_1_2(file,xliff_1_2);
+                    deserializedXliff_1_2 = xliffOperations.mapper_1_2(file);
                     logger.info(deserializedXliff_1_2);
+                    comparison.setXliffWords(deserializedXliff_1_2); // Set deserialized xliff target language to comparison object
+                    xliff_2_0 = new Xliff_2_0(); // Empty the fields
+                    xliff = new Xliff(); // Empty the fields
                     return deserializedXliff_1_2;
                 } else if (xliffFileNamespace.equals("")) {
-                    deserializedXliff = xliffOperations.mapper(file,xliff);
+                    deserializedXliff = xliffOperations.mapper(file);
                     logger.info(deserializedXliff);
-                    System.out.println("test");
+                    comparison.setXliffWords(deserializedXliff); // Set deserialized xliff target language to comparison object
+                    xliff_2_0 = new Xliff_2_0(); // Empty the fields
+                    xliff_1_2 = new Xliff_1_2(); // Empty the fields
                     return deserializedXliff;
                 }else if(xliffFileNamespace.equals("urn:oasis:names:tc:xliff:document:2.0")){
-                    deserializedXliff_2_0 = xliffOperations.mapper_2_0(file,xliff_2_0);
+                    deserializedXliff_2_0 = xliffOperations.mapper_2_0(file);
                     logger.info(deserializedXliff_2_0);
-                    System.out.println("test");
+                    comparison.setXliffWords(deserializedXliff_2_0); // Set deserialized xliff target language to comparison object
+                    xliff = new Xliff(); // Empty the fields
+                    xliff_1_2 = new Xliff_1_2(); // Empty the fields
                     return deserializedXliff_2_0;
                 }
             }catch (NullPointerException e){
                 logger.error(e);
             }
+
             logger.info("Uploaded Xliff file mapped to java object");
 
+            comparison.setXliffWords(deserializedXliff); // Set deserialized xliff target language to comparison object
             return deserializedXliff;
         }else{
             throw new InvalidFileTypeException(fileFormat); // Throw an Invalid File Type Exception if user try to upload file format different then .xliff
         }
         //deserializedXliff = xliffOperations.mapper(file, xliff); // de-serialize the xliff file to java object
-    }
-
-    /**
-     * Handles the upload of an image file containing text and extracts the text, converting it into a Java String.
-     * @param imageFile
-     * @param languageCode
-     * @return  Map<String, Object> representing the extracted text from image as String or throw an exceptions below if processing fails.
-     * @throws IOException
-     * @throws TesseractException
-     */
-    @PostMapping("/image")
-    public Map<String, Object> uploadImage(@RequestParam("image") MultipartFile imageFile, @RequestHeader("LanguageCode") String languageCode) throws IOException {
-        Map<String, Object> response = new HashMap<>(); // Create response map
-
-        fileFormat = imageFile.getOriginalFilename().substring(imageFile.getOriginalFilename().lastIndexOf(".")); // Get file format and set to fileFormat
-
-        if (xliff.getFile() == null && xliff_1_2 == null && xliff_2_0 == null){
-            throw new MissingXliffException(); // Throw a Missing file exception if user didn't upload any .xliff file
-        }else{
-            if (fileFormat.toLowerCase().equals(".png")){
-                try {
-                    extractedText = imageOperations.extractTextFromImage(imageFile, languageCode, image = new Image());
-                    response.put("status", "successful"); // Set response status as successful
-                    response.put("extracted-text", extractedText); // Set extracted-text response with extracted text from uploaded image
-
-                    logger.info("uploaded image successfully parsed!\nExtracted text: " + extractedText);
-                }catch (Exception e){
-                    throw new CorruptedFileException(e.getMessage());
-                }
-            }else{
-                throw new InvalidFileTypeException(fileFormat); // Throw an Invalid File Type Exception if user try to upload file format different then .png
-            }
-        }
-        return response;
-    }
-
-    /**
-     * Handles the upload of an image file and an XLIFF file, extracts text from the image, and compares it with the XLIFF content to identify unmatched words.
-     * @return Map<String, Object> if they match return successful or containing a <String> of unmatched words with an error message if processing fails.
-     */
-    @GetMapping("/compare")
-    public Map<String, Object> compareImageTextAndXliffText() {
-        Map<String, Object> response = new HashMap<>(); // Create response map
-
-        if (comparisonOperations.compareXliffAndImage(image, xliff).toString().isEmpty()){ // Return successful response status if there is no unmatched words
-            response.put("status", "pass");
-            response.put("message", "all words are matched!");
-
-            logger.info("Comparison result:" + response);
-        }else{ // Return fail response status if there is an unmatched words
-            response.put("status", "failed");
-            response.put("un-matched-words", comparisonOperations.compareXliffAndImage(image, xliff).toString());
-
-            logger.warn("Comparison result:" + response);
-        }
-        return response;
     }
 
     /**

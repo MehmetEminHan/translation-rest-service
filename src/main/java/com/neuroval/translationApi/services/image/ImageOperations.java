@@ -5,6 +5,7 @@ import com.neuroval.translationApi.services.log.Log;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
@@ -17,10 +18,13 @@ import java.util.List;
 @Service
 public class ImageOperations {
 
+    @Autowired
+    Image image;
+
     private static final Logger logger = Log.getLogger(ImageOperations.class);  // Logger initialized for this class only once
 
     // Extract text from the image using tesseract
-    public String extractTextFromImage(MultipartFile multipartFile, String languageCode, Image image) throws IOException, TesseractException {
+    public String extractTextFromImage(MultipartFile multipartFile, String languageCode) throws IOException, TesseractException {
         // Convert MultipartFile to File
         File tempFile = convertMultipartFileToFile(multipartFile);
 
@@ -38,7 +42,6 @@ public class ImageOperations {
             tesseract.setDatapath("/usr/share/tesseract-ocr/5/tessdata"); // Set Tesseract data path ubuntu
         }
 
-
         tesseract.setLanguage(languageCode); // Set language
         logger.info("Tesseract language set to {}", languageCode);
 
@@ -50,10 +53,10 @@ public class ImageOperations {
         tempFile.delete();
 
         // Map the extracted text to Java object
-        mapper(extractedText, image);
+        mapper(extractedText);
 
         // Split the words
-        splitWords(extractedText, image);
+        splitWords(extractedText);
 
         return extractedText;
     }
@@ -71,7 +74,7 @@ public class ImageOperations {
     }
 
     // Map the extracted text to Image JAVA object
-    public String mapper(String text, Image image){
+    public String mapper(String text){
         image.setText(text);
         logger.info("Extracted text deserialized to imageText:", image.getText());
 
@@ -79,7 +82,7 @@ public class ImageOperations {
     }
 
     // Split the words from entire string and map them to a List
-    public List<String> splitWords(String text, Image image){
+    public List<String> splitWords(String text){
         // Split the string by spaces
         String[] wordsArray = text.split("\\s+");
 

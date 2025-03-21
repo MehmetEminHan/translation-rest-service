@@ -12,6 +12,7 @@ import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 import lombok.Data;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
@@ -23,14 +24,23 @@ import javax.xml.stream.XMLStreamReader;
 
 
 
-@Service
 @Data
+@Service
 public class XliffOperations {
+
+    @Autowired
+    private Xliff xliff;
+    @Autowired
+    private Xliff_1_2 xliff_1_2;
+    @Autowired
+    private Xliff_2_0 xliff_2_0;
 
     private static final Logger logger = Log.getLogger(XliffOperations.class);  // Logger initialized for this class only once
 
+
+
     // Map xliff file to java XLIFF object
-    public  List<TransUnit> mapper(MultipartFile file, Xliff xliff) throws IOException {
+    public  List<TransUnit> mapper(MultipartFile file) throws IOException {
         try (InputStream inputStream = file.getInputStream()) {
             JAXBContext context = JAXBContext.newInstance(Xliff.class);
             Unmarshaller unmarshaller = context.createUnmarshaller();
@@ -51,7 +61,7 @@ public class XliffOperations {
 
 
     // Map xliff file to java XLIFF object with namespace_1_2
-    public  List<TransUnit_1_2> mapper_1_2(MultipartFile file, Xliff_1_2 xliff_1_2) {
+    public  List<TransUnit_1_2> mapper_1_2(MultipartFile file) {
         try (InputStream inputStream = file.getInputStream()) {
             // Create XMLStreamReader to read the file
             XMLInputFactory factory = XMLInputFactory.newInstance();
@@ -82,7 +92,7 @@ public class XliffOperations {
     }
 
     // Map xliff file to java XLIFF object with namespace_2_0
-    public  List<TransUnit_2_0> mapper_2_0(MultipartFile file, Xliff_2_0 xliff_2_0) {
+    public  List<TransUnit_2_0> mapper_2_0(MultipartFile file) {
         try (InputStream inputStream = file.getInputStream()) {
             // Create XMLStreamReader to read the file
             XMLInputFactory factory = XMLInputFactory.newInstance();
