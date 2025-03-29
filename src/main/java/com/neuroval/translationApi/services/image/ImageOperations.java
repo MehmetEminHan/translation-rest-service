@@ -1,6 +1,8 @@
 package com.neuroval.translationApi.services.image;
 
+import com.neuroval.translationApi.model.comparison.Comparison;
 import com.neuroval.translationApi.model.image.Image;
+import com.neuroval.translationApi.repository.ImageRepository;
 import com.neuroval.translationApi.services.log.Log;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
@@ -21,7 +23,19 @@ public class ImageOperations {
     @Autowired
     Image image;
 
+    @Autowired
+    ImageRepository imageRepository;
+
+    @Autowired
+    private Comparison comparison;
+
     private static final Logger logger = Log.getLogger(ImageOperations.class);  // Logger initialized for this class only once
+    private String extractedText = "";
+    private byte[] imageBytes;
+    private String fileFormat;
+
+
+
 
     // Extract text from the image using tesseract
     public String extractTextFromImage(MultipartFile multipartFile, String languageCode) throws IOException, TesseractException {
@@ -46,7 +60,7 @@ public class ImageOperations {
         logger.info("Tesseract language set to {}", languageCode);
 
         // Perform OCR
-        String extractedText = tesseract.doOCR(tempFile);
+        extractedText = tesseract.doOCR(tempFile);
         logger.info("Extracted text from image is: {}", extractedText);
 
         // Delete temp file after processing
@@ -57,6 +71,9 @@ public class ImageOperations {
 
         // Split the words
         splitWords(extractedText);
+
+        // Save image bytes
+        imageBytes = multipartFile.getBytes();
 
         return extractedText;
     }
@@ -96,6 +113,30 @@ public class ImageOperations {
 
         return wordsList;
     }
+
+    // Find the uploaded image file format and return it
+    public String getFileFormat(MultipartFile imageFile){
+        fileFormat = imageFile.getOriginalFilename().substring(imageFile.getOriginalFilename().lastIndexOf(".")); // Get file format and set to fileFormat;
+
+        return fileFormat;
+    }
+
+    // Map image to image entity
+    public void mapImageToEntity(){
+        image.setText(extractedText); // Set extracted text from image to image object
+        image.setImageData(imageBytes); // Set image binaries to image object
+        image.setImageType(imageRepository.findImageTypeRecnumByTypeName(fileFormat.toUpperCase())); // Find the corresponding image type from IMAGE_TYPE table and set to image entity
+
+
+        comparison.setImageWords(image.getText()); // Set extracted text from image to comparison object
+    }
+
+    // Save image entity to database
+    public void saveImageToDatabase(){
+        imageRepository.save(image);
+    }
+
+
 
 
 
