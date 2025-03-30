@@ -1,7 +1,7 @@
 package com.neuroval.translationApi.model.image;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 import jakarta.persistence.*;
 import lombok.Data;

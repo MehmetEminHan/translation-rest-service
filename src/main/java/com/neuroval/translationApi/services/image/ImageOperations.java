@@ -22,20 +22,14 @@ public class ImageOperations {
 
     @Autowired
     Image image;
-
     @Autowired
     ImageRepository imageRepository;
 
-    @Autowired
-    private Comparison comparison;
 
     private static final Logger logger = Log.getLogger(ImageOperations.class);  // Logger initialized for this class only once
     private String extractedText = "";
     private byte[] imageBytes;
     private String fileFormat;
-
-
-
 
     // Extract text from the image using tesseract
     public String extractTextFromImage(MultipartFile multipartFile, String languageCode) throws IOException, TesseractException {
@@ -128,7 +122,7 @@ public class ImageOperations {
         image.setImageType(imageRepository.findImageTypeRecnumByTypeName(fileFormat.toUpperCase())); // Find the corresponding image type from IMAGE_TYPE table and set to image entity
 
 
-        comparison.setImageWords(image.getText()); // Set extracted text from image to comparison object
+       // comparison.setImageWords(image.getText()); // Set extracted text from image to comparison object
     }
 
     // Save image entity to database

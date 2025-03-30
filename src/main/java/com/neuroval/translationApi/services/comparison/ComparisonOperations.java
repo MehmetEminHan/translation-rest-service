@@ -1,10 +1,13 @@
 package com.neuroval.translationApi.services.comparison;
 
 import com.neuroval.translationApi.model.comparison.Comparison;
+import com.neuroval.translationApi.model.translation.Translation;
 import com.neuroval.translationApi.model.xliff.Xliff;
 import com.neuroval.translationApi.model.image.Image;
 import com.neuroval.translationApi.model.xliff.xliff_1_2.Xliff_1_2;
 import com.neuroval.translationApi.model.xliff.xliff_2_0.Xliff_2_0;
+import com.neuroval.translationApi.repository.ComparisonRepository;
+import com.neuroval.translationApi.rest.comparison.ComparisonController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +30,15 @@ public class ComparisonOperations {
     private Xliff_2_0 xliff_2_0;
     @Autowired
     private Image image;
+
+
+
+    @Autowired
+    private Translation translation;
+
+    @Autowired
+    ComparisonRepository comparisonRepository;
+
 
     // Compare serialized XLIFF file and serialized uploaded screenshot and return non-matched words
     public Object compareXliffAndImage(){
@@ -92,8 +104,10 @@ public class ComparisonOperations {
         try {
             if (xliff.getFile() != null){
                 targetText = xliff.getFile().getBody().getTransUnitList().get(i).getTarget();
+
             }else if (xliff_1_2.getFile() != null){
                 targetText = xliff_1_2.getFile().getBody().getTransUnitList().get(i).getTarget();
+
             }else if (xliff_2_0.getFile() != null){
                 targetText = xliff_2_0.getFile().getBody().getTransUnitList().get(i).getTarget();
             }
@@ -119,6 +133,15 @@ public class ComparisonOperations {
             e.printStackTrace();
         }
         return transUnitListSize;
+    }
+
+    public void mapToFileEntity(){
+       comparison.setFileLinknum(translation.getRecnum());
+       comparison.setImageLinknum(image.getRecnum());
+    }
+
+    public void saveComparisonToDatabase(){
+        comparisonRepository.save(comparison);
     }
 }
 
