@@ -52,9 +52,11 @@ public class XliffController {
     public Response uploadXliff(@RequestParam("file") MultipartFile file) throws IOException, JAXBException {
         response = new Response(); // Create new response object and map the json response to response object
         if (xliffOperations.getFileFormat(file).toLowerCase().equals(".xliff")) {
+            xliffOperations.mapToFileEntity(file); // first map the sent it xliff file
+
             response.setStatus("Success");
             response.setMessage("Successfully uploaded xliff");
-            response.setData(xliffOperations.mapToFileEntity(file)); // first map the sent it xliff file and set it to the response object
+            response.setData(xliffOperations.getTranslation()); // map xliff file using translation object in the service to response object
 
             xliffOperations.saveXliffToDatabase(); // Save xliff entity to translation table
 

@@ -23,10 +23,6 @@ import java.io.IOException;
 public class ImageController {
 
     @Autowired
-    private ImageOperations imageOperations;
-
-
-    @Autowired
     private Image image;
     @Autowired
     private Xliff_1_2 xliff_1_2;
@@ -34,9 +30,12 @@ public class ImageController {
     private Xliff_2_0 xliff_2_0;
     @Autowired
     private Xliff xliff;
+    @Autowired
+    private ImageOperations imageOperations;
+
 
     private static final Logger logger = LogManager.getLogger(ImageController.class);
-    private Response response = new Response();
+    private Response response;
 
     /**
      * Handles the upload of an image file containing text and extracts the text, converting it into a Java String.
@@ -48,7 +47,7 @@ public class ImageController {
      */
     @PostMapping("/upload")
     public Response uploadImage(@RequestParam("image") MultipartFile imageFile, @RequestHeader("LanguageCode") String languageCode) throws IOException {
-
+        response = new Response();
         if (xliff == null && xliff_1_2 == null && xliff_2_0 == null){
             throw new MissingXliffException(); // Throw a Missing file exception if user didn't upload any .xliff file
         }else{
@@ -60,7 +59,7 @@ public class ImageController {
 
                     response.setStatus("successful");
                     response.setMessage("Image extracted successfully!");
-                    response.setData(image);
+                    response.setData(imageOperations.getImage());
 
 
                 }catch (Exception e){
