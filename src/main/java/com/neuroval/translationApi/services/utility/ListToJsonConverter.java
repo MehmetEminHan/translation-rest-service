@@ -4,13 +4,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.Converter;
 import jakarta.persistence.AttributeConverter;
-import jakarta.persistence.Converter;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.List;
 
-import java.util.List;
 
 @Converter
 public class ListToJsonConverter implements AttributeConverter<List<String>, String> {

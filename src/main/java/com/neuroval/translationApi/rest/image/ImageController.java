@@ -52,7 +52,7 @@ public class ImageController {
         if (xliff == null && xliff_1_2 == null && xliff_2_0 == null){
             throw new MissingXliffException(); // Throw a Missing file exception if user didn't upload any .xliff file
         }else{
-            if (imageOperations.getFileFormat(imageFile).toLowerCase().equals(".png")){
+            if (imageOperations.getFileFormat(imageFile).equalsIgnoreCase(".png")){
                 try {
                     imageOperations.extractTextFromImage(imageFile, languageCode);
                     imageOperations.mapImageToEntity();
@@ -62,7 +62,7 @@ public class ImageController {
                     response.setMessage("Image extracted successfully!");
                     response.setData(image);
 
-                    logger.info("uploaded image successfully parsed!\nExtracted text: {}", image.getText());
+
                 }catch (Exception e){
                     throw new CorruptedFileException(e.getMessage());
                 }

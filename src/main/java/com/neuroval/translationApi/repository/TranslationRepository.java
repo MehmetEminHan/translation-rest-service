@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface TranslationRepository extends JpaRepository<Translation, Long> {
+public interface TranslationRepository extends JpaRepository<Translation, Integer> {
     // Native query to find the recnum for a given typeName
     @Query(value = "SELECT recnum FROM file_type WHERE file_type = :typeName", nativeQuery = true)
     Integer findFileTypeRecnumByTypeName(@Param("typeName") String typeName);

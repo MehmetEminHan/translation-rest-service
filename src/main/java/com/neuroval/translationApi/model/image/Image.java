@@ -1,24 +1,21 @@
 package com.neuroval.translationApi.model.image;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
-
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
-
-import java.io.IOException;
 import java.util.List;
 
 
 @Data
-@Component
 @Entity
+@Component
+@Table(name = "image")
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer Recnum;
+    private Integer recnum;
 
     @Lob
     @Column(name = "EXTRACTED_TEXT", columnDefinition = "LONGBLOB")
@@ -35,5 +32,4 @@ public class Image {
 
     @Column(name = "IMAGE_TYPE")
     private Integer imageType;
-
 }

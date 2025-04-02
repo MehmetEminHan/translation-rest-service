@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Data
+@Entity
 @Component
 @Table(name = "comparison")
-@Entity
 public class Comparison {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

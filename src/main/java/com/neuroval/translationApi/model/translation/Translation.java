@@ -7,10 +7,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Entity
-@Table(name = "Translation")
+
 @Data
+@Entity
 @Component
+@Table(name = "translation")
 public class Translation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,5 +27,4 @@ public class Translation {
 
     @Column(name = "FILE_TYPE")
     private Integer fileType;
-
 }

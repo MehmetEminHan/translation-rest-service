@@ -26,8 +26,6 @@ public class ComparisonController {
         response.setMessage("Comparing images and XLIFF texts");
         response.setData(comparisonOperations.compareXliffAndImage());
 
-        comparisonOperations.mapToFileEntity();
-
         comparisonOperations.saveComparisonToDatabase();
 
         return response;

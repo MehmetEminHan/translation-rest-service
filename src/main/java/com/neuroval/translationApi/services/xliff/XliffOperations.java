@@ -12,6 +12,9 @@ import com.neuroval.translationApi.model.xliff.xliff_2_0.TransUnit_2_0;
 import com.neuroval.translationApi.model.xliff.xliff_2_0.Xliff_2_0;
 import com.neuroval.translationApi.repository.TranslationRepository;
 import com.neuroval.translationApi.services.log.Log;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Lob;
+import jakarta.persistence.PersistenceContext;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
@@ -19,14 +22,11 @@ import lombok.Data;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -52,11 +52,9 @@ public class XliffOperations{
     @Autowired
     private Comparison comparison;
     @Autowired
-    private Translation translation;
-
-    @Autowired
     TranslationRepository translationRepository;
 
+    private Translation translation;
 
     private List<TransUnit> deserializedXliff;
     private List<TransUnit_1_2> deserializedXliff_1_2;
@@ -176,6 +174,8 @@ public class XliffOperations{
                 namespace = "";
             }
 
+            logger.warn("Uploaded XLIFF file has name space {}", namespace);
+
             return namespace;
     } catch (XMLStreamException e) {
             logger.error(e.getMessage(), e); // log error detail
@@ -184,16 +184,15 @@ public class XliffOperations{
     }
 
     // Find the uploaded image file format and return it
-    public String getFileFormat(MultipartFile imageFile){
-        fileFormat = imageFile.getOriginalFilename().substring(imageFile.getOriginalFilename().lastIndexOf(".")); // Get file format and set to fileFormat;
-
-        if(fileFormat.equals("xliff")){}
+    public String getFileFormat(MultipartFile xliffFile){
+        fileFormat = xliffFile.getOriginalFilename().substring(xliffFile.getOriginalFilename().lastIndexOf(".")); // Get file format and set to fileFormat;
+        logger.info("The uploaded file format is: {}", fileFormat);
         return fileFormat;
     }
 
     public Object mapToFileEntity(MultipartFile file){
-        translation.setFileType(translationRepository.findFileTypeRecnumByTypeName(getFileFormat(file)));
-
+        translation = new Translation();
+        translation.setFileType(translationRepository.findFileTypeRecnumByTypeName(getFileFormat(file).toUpperCase()));
         try{
             if (isThereNamespace(file).equals("urn:oasis:names:tc:xliff:document:1.2")){
                 deserializedXliff_1_2 = mapper_1_2(file);
@@ -252,13 +251,16 @@ public class XliffOperations{
         }catch (NullPointerException | IOException e){
             logger.error(e);
         }
+
+        logger.info("Uploaded Xliff file mapped to java object");
+
         return xliff;
     }
 
-    @Transactional
     // Save xliff entity to database
     public void saveXliffToDatabase(){
         translationRepository.save(translation);
+        logger.info("{}Translation (Xliff) saved to database!", translation.toString());
     }
 
 }

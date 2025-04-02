@@ -7,7 +7,8 @@ import com.neuroval.translationApi.model.image.Image;
 import com.neuroval.translationApi.model.xliff.xliff_1_2.Xliff_1_2;
 import com.neuroval.translationApi.model.xliff.xliff_2_0.Xliff_2_0;
 import com.neuroval.translationApi.repository.ComparisonRepository;
-import com.neuroval.translationApi.rest.comparison.ComparisonController;
+import com.neuroval.translationApi.services.image.ImageOperations;
+import com.neuroval.translationApi.services.xliff.XliffOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +18,6 @@ import java.util.logging.Logger;
 
 @Service
 public class ComparisonOperations {
-
-    private static final Logger logger = Logger.getLogger(ComparisonOperations.class.getName());
 
     @Autowired
     private Comparison comparison;
@@ -30,24 +29,30 @@ public class ComparisonOperations {
     private Xliff_2_0 xliff_2_0;
     @Autowired
     private Image image;
-
-
-
     @Autowired
     private Translation translation;
+    @Autowired
+    private XliffOperations xliffOperations;
+    @Autowired
+    private ImageOperations imageOperations;
 
     @Autowired
     ComparisonRepository comparisonRepository;
 
+    private static final Logger logger = Logger.getLogger(ComparisonOperations.class.getName());
+    List<String> xliffTargetTextList;
+    List<String> imageTextList;
+    List<String> matchedWords;
 
     // Compare serialized XLIFF file and serialized uploaded screenshot and return non-matched words
-    public Object compareXliffAndImage(){
-        List<String> xliffTargetTextList = new ArrayList<>();
-        List<String> imageTextList = new ArrayList<>(image.getTextList());
-        List<String> matchedWords = new ArrayList<>();
+    public Object compareXliffAndImage() {
+        imageTextList = new ArrayList<>(image.getTextList());
+        matchedWords = new ArrayList<>();
+        xliffTargetTextList = new ArrayList<>();
+
         String targetText = "";
 
-        for (int i = 0; i < getTransUnitListSize() ; i++) {
+        for (int i = 0; i < getTransUnitListSize(); i++) {
             targetText = getTargetText(i);
             String[] words = targetText.split("\\s+"); // Splits the target text by whitespace
             for (String word : words) {
@@ -61,38 +66,36 @@ public class ComparisonOperations {
         logger.info("Comparison Result");
 
         // Find matched words and set them to matchedWords List
-        if (xliffTargetTextList.size() < imageTextList.size()){
+        if (xliffTargetTextList.size() < imageTextList.size()) {
             for (String s : imageTextList) {
-                if (xliffTargetTextList.contains(s)){
+                if (xliffTargetTextList.contains(s)) {
                     matchedWords.add(s);
                 }
             }
-        }else {
+        } else {
             for (String s : xliffTargetTextList) {
-                if (imageTextList.contains(s)){
+                if (imageTextList.contains(s)) {
                     matchedWords.add(s);
                 }
             }
         }
-        comparison.setMatchedWords(matchedWords); // Set map matchedWords list to comparison object matchedwords
+
 
         // Remove the same words and collect the unmatched words in the Array
         imageTextList.removeAll(xliffTargetTextList);
-        // Set unmatched words from image to comparison UnmatchedWordsFromImage List
-        comparison.setUnmatchedWordsFromImage(imageTextList);
 
         // Remove the same words and collect the unmatched words in the Array
         xliffTargetTextList.removeAll(image.getTextList());
-        // Set unmatched words from xliff to comparison UnmatchedWordsFromXliff List
-        comparison.setUnmatchedWordsFromXliff(xliffTargetTextList);
 
         logger.info(comparison.toString());
         logger.info("----------------------COMPARISON-END---------------------");
 
         // Check if the trans unit target language list is empty return that
-        if(xliffTargetTextList.isEmpty()){
+        if (xliffTargetTextList.isEmpty()) {
             xliffTargetTextList.add("All words are matched! congrats!");
         }
+
+        mapToFileEntity();
 
         return comparison;
     }
@@ -102,16 +105,16 @@ public class ComparisonOperations {
 
         // Create a new list contains transunit target language
         try {
-            if (xliff.getFile() != null){
+            if (xliff.getFile() != null) {
                 targetText = xliff.getFile().getBody().getTransUnitList().get(i).getTarget();
 
-            }else if (xliff_1_2.getFile() != null){
+            } else if (xliff_1_2.getFile() != null) {
                 targetText = xliff_1_2.getFile().getBody().getTransUnitList().get(i).getTarget();
 
-            }else if (xliff_2_0.getFile() != null){
+            } else if (xliff_2_0.getFile() != null) {
                 targetText = xliff_2_0.getFile().getBody().getTransUnitList().get(i).getTarget();
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return targetText;
@@ -122,25 +125,29 @@ public class ComparisonOperations {
 
         try {
             // Create a new list contains transunit target language
-            if (xliff.getFile() != null){
+            if (xliff.getFile() != null) {
                 transUnitListSize = xliff.getFile().getBody().getTransUnitList().size();
-            }else if (xliff_1_2.getFile() != null){
+            } else if (xliff_1_2.getFile() != null) {
                 transUnitListSize = xliff_1_2.getFile().getBody().getTransUnitList().size();
-            }else if (xliff_2_0.getFile() != null){
+            } else if (xliff_2_0.getFile() != null) {
                 transUnitListSize = xliff_2_0.getFile().getBody().getTransUnitList().size();
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return transUnitListSize;
     }
 
-    public void mapToFileEntity(){
-       comparison.setFileLinknum(translation.getRecnum());
-       comparison.setImageLinknum(image.getRecnum());
+    public void mapToFileEntity() {
+        //comparison = new Comparison(); // Create new comparison entitiy
+        comparison.setMatchedWords(matchedWords); // Set map matchedWords list to comparison object matchedwords
+        comparison.setFileLinknum(xliffOperations.getTranslation().getRecnum()); // Set comparison file linknum as trasnlation recnum
+        comparison.setImageLinknum(imageOperations.getImage().getRecnum()); // Set comparison image linkum as image recnum
+        comparison.setUnmatchedWordsFromXliff(xliffTargetTextList); // Set unmatched words from xliff to comparison UnmatchedWordsFromXliff List
+        comparison.setUnmatchedWordsFromImage(imageTextList); // Set unmatched words from image to comparison UnmatchedWordsFromImage List
     }
 
-    public void saveComparisonToDatabase(){
+    public void saveComparisonToDatabase() {
         comparisonRepository.save(comparison);
     }
 }
