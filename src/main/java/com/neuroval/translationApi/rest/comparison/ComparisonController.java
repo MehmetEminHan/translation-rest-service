@@ -14,7 +14,8 @@ public class ComparisonController {
 
     @Autowired
     private ComparisonOperations comparisonOperations;
-    private Response response = new Response();
+    private Response response;
+    private Object responseObject;
 
     /**
      * Handles the upload of an image file and an XLIFF file, extracts text from the image, and compares it with the XLIFF content to identify unmatched words.
@@ -22,11 +23,15 @@ public class ComparisonController {
      */
     @GetMapping("/compare")
     public Response compareImageTextAndXliffText() {
+        response = new Response();
+
+        responseObject = comparisonOperations.compareXliffAndImage();
+        comparisonOperations.mapToFileEntity();
+        comparisonOperations.saveComparisonToDatabase();
+
         response.setStatus("OK");
         response.setMessage("Comparing images and XLIFF texts");
-        response.setData(comparisonOperations.compareXliffAndImage());
-
-        comparisonOperations.saveComparisonToDatabase();
+        response.setData(responseObject);
 
         return response;
     }

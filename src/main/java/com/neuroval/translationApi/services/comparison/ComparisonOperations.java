@@ -1,7 +1,6 @@
 package com.neuroval.translationApi.services.comparison;
 
 import com.neuroval.translationApi.model.comparison.Comparison;
-import com.neuroval.translationApi.model.translation.Translation;
 import com.neuroval.translationApi.model.xliff.Xliff;
 import com.neuroval.translationApi.model.image.Image;
 import com.neuroval.translationApi.model.xliff.xliff_1_2.Xliff_1_2;
@@ -29,8 +28,6 @@ public class ComparisonOperations {
     private Xliff_2_0 xliff_2_0;
     @Autowired
     private Image image;
-    @Autowired
-    private Translation translation;
     @Autowired
     private XliffOperations xliffOperations;
     @Autowired
@@ -139,12 +136,13 @@ public class ComparisonOperations {
     }
 
     public void mapToFileEntity() {
-        //comparison = new Comparison(); // Create new comparison entitiy
-        comparison.setMatchedWords(matchedWords); // Set map matchedWords list to comparison object matchedwords
+        comparison = new Comparison(); // Create new comparison entity
+        comparison.setMatchedWords(matchedWords); // Set map matchedWords list to comparison object matched words
         comparison.setFileLinknum(xliffOperations.getTranslation().getRecnum()); // Set comparison file linknum as trasnlation recnum
         comparison.setImageLinknum(imageOperations.getImage().getRecnum()); // Set comparison image linkum as image recnum
         comparison.setUnmatchedWordsFromXliff(xliffTargetTextList); // Set unmatched words from xliff to comparison UnmatchedWordsFromXliff List
         comparison.setUnmatchedWordsFromImage(imageTextList); // Set unmatched words from image to comparison UnmatchedWordsFromImage List
+        comparison.setImageWords(imageOperations.getImage().getText());
     }
 
     public void saveComparisonToDatabase() {
