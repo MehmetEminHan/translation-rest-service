@@ -32,4 +32,7 @@ public class Image {
 
     @Column(name = "IMAGE_TYPE")
     private Integer imageType;
+
+    @Transient
+    private String languageCode;
 }

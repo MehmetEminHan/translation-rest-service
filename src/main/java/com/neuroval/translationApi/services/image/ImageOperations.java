@@ -144,7 +144,7 @@ public class ImageOperations {
         image.setImageData(imageBytes); // Set image binaries to image object
         image.setImageType(imageRepository.findImageTypeRecnumByTypeName(fileFormat.toUpperCase())); // Find the corresponding image type from IMAGE_TYPE table and set to image entity
         comparison.setImageWords(extractedText); // Set extracted text from image to comparison object
-        logger.info("uploaded image successfully parsed!\nExtracted text: {}", image.getText());
+        logger.info("uploaded image successfully mapped to IMAGE entity", image.toString());
     }
 
     /**

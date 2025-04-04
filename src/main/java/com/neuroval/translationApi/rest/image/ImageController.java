@@ -56,6 +56,7 @@ public class ImageController {
                 try {
                     imageOperations.extractTextFromImage(imageFile, languageCode); // Extract the text from the image using the Tesseract software
                     imageOperations.mapToImageEntity();  // map the extracted IMAGE text to IMAGE object
+                    imageOperations.getImage().setLanguageCode(languageCode);
                     imageOperations.saveImageToDatabase(); // Save the IMAGE object to database
 
                     response.setStatus("successful");

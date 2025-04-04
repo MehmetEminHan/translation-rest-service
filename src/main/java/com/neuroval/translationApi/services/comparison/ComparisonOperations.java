@@ -155,6 +155,7 @@ public class ComparisonOperations {
         comparison.setUnmatchedWordsFromXliff(xliffTargetTextList); // Set unmatched words from xliff to comparison UnmatchedWordsFromXliff List
         comparison.setUnmatchedWordsFromImage(imageTextList); // Set unmatched words from image to comparison UnmatchedWordsFromImage List
         comparison.setImageWords(imageOperations.getImage().getText());
+        comparison.setXliffWords(xliffOperations.getTranslation().getTargetLanguageText());
     }
 
     /**
