@@ -41,7 +41,10 @@ public class ComparisonOperations {
     List<String> imageTextList;
     List<String> matchedWords;
 
-    // Compare serialized XLIFF file and serialized uploaded screenshot and return non-matched words
+    /**
+     * Compare serialized XLIFF file and serialized uploaded screenshot and return non-matched words
+     * @return
+     */
     public Object compareXliffAndImage() {
         imageTextList = new ArrayList<>(image.getTextList());
         matchedWords = new ArrayList<>();
@@ -97,6 +100,12 @@ public class ComparisonOperations {
         return comparison;
     }
 
+
+    /**
+     * Return the target text of the transunit file in the desired index within the specified xliff file.
+     * @param i
+     * @return
+     */
     private String getTargetText(int i) {
         String targetText = "";
 
@@ -135,6 +144,9 @@ public class ComparisonOperations {
         return transUnitListSize;
     }
 
+    /**
+     * map the corresponding image and xliff entities to the corresponding COMPARISON entity
+     */
     public void mapToFileEntity() {
         comparison = new Comparison(); // Create new comparison entity
         comparison.setMatchedWords(matchedWords); // Set map matchedWords list to comparison object matched words
@@ -145,6 +157,9 @@ public class ComparisonOperations {
         comparison.setImageWords(imageOperations.getImage().getText());
     }
 
+    /**
+     * Save COMPARISON entity to database
+     */
     public void saveComparisonToDatabase() {
         comparisonRepository.save(comparison);
     }

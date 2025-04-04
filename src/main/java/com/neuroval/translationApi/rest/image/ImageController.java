@@ -47,21 +47,20 @@ public class ImageController {
      */
     @PostMapping("/upload")
     public Response uploadImage(@RequestParam("image") MultipartFile imageFile, @RequestHeader("LanguageCode") String languageCode) throws IOException {
-        response = new Response();
+        response = new Response(); // Initialize the new response object and map the json response to response object
+
         if (xliff == null && xliff_1_2 == null && xliff_2_0 == null){
             throw new MissingXliffException(); // Throw a Missing file exception if user didn't upload any .xliff file
         }else{
             if (imageOperations.getFileFormat(imageFile).equalsIgnoreCase(".png")){
                 try {
-                    imageOperations.extractTextFromImage(imageFile, languageCode);
-                    imageOperations.mapImageToEntity();
-                    imageOperations.saveImageToDatabase();
+                    imageOperations.extractTextFromImage(imageFile, languageCode); // Extract the text from the image using the Tesseract software
+                    imageOperations.mapToImageEntity();  // map the extracted IMAGE text to IMAGE object
+                    imageOperations.saveImageToDatabase(); // Save the IMAGE object to database
 
                     response.setStatus("successful");
                     response.setMessage("Image extracted successfully!");
-                    response.setData(imageOperations.getImage());
-
-
+                    response.setData(imageOperations.getImage()); // Map the IMAGE object to RESPONSE object and return as json
                 }catch (Exception e){
                     throw new CorruptedFileException(e.getMessage());
                 }

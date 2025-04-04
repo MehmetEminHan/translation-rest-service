@@ -31,13 +31,13 @@ public class XliffController {
     @Autowired
     private XliffOperations xliffOperations;
 
+    private Response response;
+    private String extractedText;
+    private String xliffFileNamespace;
     private List<TransUnit> deserializedXliff;
     private List<TransUnit_1_2> deserializedXliff_1_2;
     private List<TransUnit_2_0> deserializedXliff_2_0;
-    private String extractedText;
     private static final Logger logger = LogManager.getLogger(XliffController.class);
-    private String xliffFileNamespace;
-    private Response response;
 
     /**
      * Handles the upload of an XLIFF file and converts it into a Java XLIFF object.
@@ -50,15 +50,17 @@ public class XliffController {
     @PostMapping("/upload")
     @Transactional
     public Response uploadXliff(@RequestParam("file") MultipartFile file) throws IOException, JAXBException {
-        response = new Response(); // Create new response object and map the json response to response object
+
+        response = new Response(); // Initialize the new response object and map the json response to response object
+
         if (xliffOperations.getFileFormat(file).toLowerCase().equals(".xliff")) {
-            xliffOperations.mapToFileEntity(file); // first map the sent it xliff file
+
+            xliffOperations.mapToFileEntity(file); // map the uploaded xliff file to XLIFF object
+            xliffOperations.saveXliffToDatabase(); // Save the XLIFF object to database
 
             response.setStatus("Success");
             response.setMessage("Successfully uploaded xliff");
-            response.setData(xliffOperations.getTranslation()); // map xliff file using translation object in the service to response object
-
-            xliffOperations.saveXliffToDatabase(); // Save xliff entity to translation table
+            response.setData(xliffOperations.getTranslation()); // Map the XLIFF object transunit list to RESPONSE object and return as json
 
             return response;
         } else {

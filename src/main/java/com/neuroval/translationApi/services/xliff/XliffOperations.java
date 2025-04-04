@@ -67,7 +67,12 @@ public class XliffOperations{
     private static final Logger logger = Log.getLogger(XliffOperations.class);  // Logger initialized for this class only once
 
 
-    // Map xliff file to java XLIFF object
+    /**
+     * Map xliff file to java XLIFF object
+     * @param file
+     * @return
+     * @throws IOException
+     */
     public  List<TransUnit> mapper(MultipartFile file) throws IOException {
         try (InputStream inputStream = file.getInputStream()) {
             JAXBContext context = JAXBContext.newInstance(Xliff.class);
@@ -87,7 +92,11 @@ public class XliffOperations{
         }
     }
 
-    // Map xliff file to java XLIFF object with namespace_1_2
+    /**
+     * Map xliff file to java XLIFF object with namespace_1_2
+     * @param file
+     * @return
+     */
     public  List<TransUnit_1_2> mapper_1_2(MultipartFile file) {
         try (InputStream inputStream = file.getInputStream()) {
             // Create XMLStreamReader to read the file
@@ -118,7 +127,11 @@ public class XliffOperations{
         }
     }
 
-    // Map xliff file to java XLIFF object with namespace_2_0
+    /**
+     * Map xliff file to java XLIFF object with namespace_2_0
+     * @param file
+     * @return
+     */
     public  List<TransUnit_2_0> mapper_2_0(MultipartFile file) {
         try (InputStream inputStream = file.getInputStream()) {
             // Create XMLStreamReader to read the file
@@ -151,7 +164,12 @@ public class XliffOperations{
         }
     }
 
-    // Find the namespace in the uploaded xliff file and return as a string
+    /**
+     * Find the namespace in the uploaded xliff file and return as a string
+     * @param file
+     * @return
+     * @throws IOException
+     */
     public String isThereNamespace(MultipartFile file) throws IOException {
         try (InputStream inputStream = file.getInputStream()) {
             // Create XMLStreamReader to read the file
@@ -183,13 +201,22 @@ public class XliffOperations{
         }
     }
 
-    // Find the uploaded image file format and return it
+    /**
+     * Find the uploaded image file format and return it
+     * @param xliffFile
+     * @return
+     */
     public String getFileFormat(MultipartFile xliffFile){
         fileFormat = xliffFile.getOriginalFilename().substring(xliffFile.getOriginalFilename().lastIndexOf(".")); // Get file format and set to fileFormat;
         logger.info("The uploaded file format is: {}", fileFormat);
         return fileFormat;
     }
 
+    /**
+     * Parse the xliff file uploaded by the user and map it to the corresponding java entity
+     * @param file
+     * @return
+     */
     public Object mapToFileEntity(MultipartFile file){
         translation = new Translation();
         translation.setFileType(translationRepository.findFileTypeRecnumByTypeName(getFileFormat(file).toUpperCase()));
@@ -257,7 +284,9 @@ public class XliffOperations{
         return xliff;
     }
 
-    // Save xliff entity to database
+    /**
+     * Save XLIFF entity to database
+     */
     public void saveXliffToDatabase(){
         translationRepository.save(translation);
         logger.info("{}Translation (Xliff) saved to database!", translation.toString());

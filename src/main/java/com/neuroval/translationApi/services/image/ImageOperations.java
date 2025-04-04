@@ -1,5 +1,6 @@
 package com.neuroval.translationApi.services.image;
 
+import com.neuroval.translationApi.model.comparison.Comparison;
 import com.neuroval.translationApi.model.image.Image;
 import com.neuroval.translationApi.repository.ImageRepository;
 import com.neuroval.translationApi.services.log.Log;
@@ -25,25 +26,32 @@ public class ImageOperations {
     @Autowired
     private Image image;
     @Autowired
+    private Comparison comparison;
+    @Autowired
     ImageRepository imageRepository;
 
-    private static final Logger logger = Log.getLogger(ImageOperations.class);  // Logger initialized for this class only once
-    private String extractedText = "";
     private byte[] imageBytes;
     private String fileFormat;
     private List<String> imageTextList;
+    private String extractedText = "";
+    private static final Logger logger = Log.getLogger(ImageOperations.class);
 
-    // Extract text from the image using tesseract
+    /**
+     * Extract text from the image using tesseract
+     * @param multipartFile
+     * @param languageCode
+     * @return
+     * @throws IOException
+     * @throws TesseractException
+     */
     public String extractTextFromImage(MultipartFile multipartFile, String languageCode) throws IOException, TesseractException {
-        // Convert MultipartFile to File
-        File tempFile = convertMultipartFileToFile(multipartFile);
 
-        // Get the os name
-        String osName = System.getProperty("os.name");
+        File tempFile = convertMultipartFileToFile(multipartFile); // Convert MultipartFile to File
+
+        String osName = System.getProperty("os.name"); // Get the os name
         logger.info("Detected OS Name is: {}", osName);
 
-        // Initialize Tesseracts
-        Tesseract tesseract = new Tesseract();
+        Tesseract tesseract = new Tesseract();  // Initialize Tesseracts
 
         // Assign tesseract datapath based on OS system
         if(osName.toLowerCase().contains("windows")) {
@@ -55,28 +63,28 @@ public class ImageOperations {
         tesseract.setLanguage(languageCode); // Set language
         logger.info("Tesseract language set to {}", languageCode);
 
-        // Perform OCR
-        extractedText = tesseract.doOCR(tempFile);
+        extractedText = tesseract.doOCR(tempFile); // Perform OCR
         logger.info("Extracted text from image is: {}", extractedText);
 
-        // Delete temp file after processing
-        tempFile.delete();
+        tempFile.delete(); // Delete temp file after processing
 
-        // Map the extracted text to Java object
-        mapper(extractedText);
+        mapper(extractedText); // Map the extracted text to Java object
 
-        // Split the words
-        imageTextList = splitWords(extractedText);
+        imageTextList = splitWords(extractedText); // Split the words
 
-        // Save image bytes
-        imageBytes = multipartFile.getBytes();
+        imageBytes = multipartFile.getBytes(); // Save image bytes
 
         logger.warn("The text successfully extracted from image is: {}", extractedText);
 
         return extractedText;
     }
 
-    // Convert multiple part file to single file
+    /**
+     * Convert multiple part file to single file
+     * @param file
+     * @return
+     * @throws IOException
+     */
     private File convertMultipartFileToFile(MultipartFile file) throws IOException {
         File tempFile = File.createTempFile("uploaded", ".png");
 
@@ -87,7 +95,11 @@ public class ImageOperations {
         return tempFile;
     }
 
-    // Map the extracted text to Image JAVA object
+    /**
+     * Map the extracted text to Image JAVA object
+     * @param text
+     * @return
+     */
     public String mapper(String text){
         image.setText(text);
         logger.info("Extracted text deserialized to imageText:", image.getText());
@@ -95,7 +107,11 @@ public class ImageOperations {
         return image.getText();
     }
 
-    // Split the words from entire string and map them to a List
+    /**
+     * Split the words from entire string and map them to a List
+     * @param text
+     * @return
+     */
     public List<String> splitWords(String text){
         String[] wordsArray = text.split("\\s+");  // Split the string by spaces
 
@@ -108,23 +124,32 @@ public class ImageOperations {
         return wordsList;
     }
 
-    // Find the uploaded image file format and return it
+    /**
+     * Find the uploaded image file format and return it
+     * @param imageFile
+     * @return
+     */
     public String getFileFormat(MultipartFile imageFile){
         fileFormat = imageFile.getOriginalFilename().substring(imageFile.getOriginalFilename().lastIndexOf(".")); // Get file format and set to fileFormat;
         return fileFormat;
     }
 
-    // Map image to image entity
-    public void mapImageToEntity(){
+    /**
+     * Map image to image entity
+     */
+    public void mapToImageEntity(){
         image = new Image(); // Create new object of image
         image.setTextList(imageTextList);
         image.setText(extractedText); // Set extracted text from image to image object
         image.setImageData(imageBytes); // Set image binaries to image object
         image.setImageType(imageRepository.findImageTypeRecnumByTypeName(fileFormat.toUpperCase())); // Find the corresponding image type from IMAGE_TYPE table and set to image entity
+        comparison.setImageWords(extractedText); // Set extracted text from image to comparison object
         logger.info("uploaded image successfully parsed!\nExtracted text: {}", image.getText());
     }
 
-    // Save image entity to database
+    /**
+     * Save image entity to database
+     */
     public void saveImageToDatabase(){
         imageRepository.save(image);
         logger.info("Extracted text from image successfully saved to database");

@@ -14,6 +14,7 @@ public class ComparisonController {
 
     @Autowired
     private ComparisonOperations comparisonOperations;
+
     private Response response;
     private Object responseObject;
 
@@ -23,15 +24,15 @@ public class ComparisonController {
      */
     @GetMapping("/compare")
     public Response compareImageTextAndXliffText() {
-        response = new Response();
+        response = new Response(); // Initialize the new response object and map the json response to response object
 
-        responseObject = comparisonOperations.compareXliffAndImage();
-        comparisonOperations.mapToFileEntity();
-        comparisonOperations.saveComparisonToDatabase();
+        responseObject = comparisonOperations.compareXliffAndImage(); // Compare FILE text with IMAGE text and set to responseObject
+        comparisonOperations.mapToFileEntity(); // map the extracted FILE text and IMAGE text to COMPARISON object
+        comparisonOperations.saveComparisonToDatabase(); // Save the COMPARISON object to database
 
         response.setStatus("OK");
         response.setMessage("Comparing images and XLIFF texts");
-        response.setData(responseObject);
+        response.setData(responseObject); // Map the responseObject (comparison object) object to RESPONSE object and return as json
 
         return response;
     }

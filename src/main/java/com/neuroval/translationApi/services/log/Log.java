@@ -4,7 +4,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Log {
-    // Method to get the logger instance
+
+    /**
+     * Method to get the logger instance
+     * @param clazz
+     * @return
+     */
     public static Logger getLogger(Class<?> clazz) {
         return LogManager.getLogger(clazz);
     }
