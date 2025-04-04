@@ -17,10 +17,10 @@ public class TransUnit_2_0 {
 
     public final String  test = "test";
     //Elements
-    @XmlElement(namespace = "urn:oasis:names:tc:xliff:document:1.2")
+    @XmlElement(namespace = "urn:oasis:names:tc:xliff:document:2.0")
     private String source;
 
-    @XmlElement(namespace = "urn:oasis:names:tc:xliff:document:1.2")
+    @XmlElement(namespace = "urn:oasis:names:tc:xliff:document:2.0")
     private String target;
 
     //Attributes

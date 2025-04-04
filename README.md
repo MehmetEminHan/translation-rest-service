@@ -5,8 +5,7 @@ This project is a **RESTful** web service developed using **Spring Boot** and **
 
 ## Features
 - Java 21
-- Spring Boot 3.4.3 
-- Spring Boot framework
+- Spring Boot 3.4.3
 - Maven 4.0.0
 - Lombok 1.18.30
 - Jakarta xml bind 4.0.0
@@ -43,3 +42,8 @@ translationApi/
 | GET    | /neuroval/translatition/validation/xliff/upload/compare     | Compare serialized translation file and uploaded image   |
 | POST   | /neuroval/translatition/validation/xliff/upload/isAwake     | Returns status of the endpoint                           |
 
+## Notes for Dev
+- Each time the user makes a new request, the entity corresponding to the desired operation in the services is re-initialized in the "mapTo____Entity" method.
+- And within each service, these entities are kept in the field without being initialized.
+- In short, when we want to access entities between classes, instead of directly calling the Entities themselves, we call the entities that we define as fields within the Services.
+- The reason for doing this is that @Autowired is a singleton pattern. Since @Autowired keeps the same entity in RAM each time, the Hibernate can't save the entities as a different row.
