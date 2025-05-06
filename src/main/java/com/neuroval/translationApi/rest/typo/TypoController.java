@@ -44,14 +44,16 @@ public class TypoController {
         return response;
     }
 
-    @GetMapping("/xliff/typo")
+    /*@GetMapping("/xliff/typo")
     public Response findTypoFromFile() throws IOException {
         response = new Response();
+
         typoOperations = new TypoOperations();
+        typoOperations.typoFinderEnglish(xliffOperations.getTranslation().getTargetLanguageText())
         response.setMessage("Possible spelling mistake found.");
         response.setStatus("Success");
-        //response.setData(typoOperations.typoFinderEnglish(xliffOperations.getTranslation().getTargetLanguageText()));
+        response.setData(typoOperations.typoFinderEnglish(String.join(",",xliffOperations.getTranslation().getTargetLanguageText())));
         return response;
-    }
+    }*/
 
 }
