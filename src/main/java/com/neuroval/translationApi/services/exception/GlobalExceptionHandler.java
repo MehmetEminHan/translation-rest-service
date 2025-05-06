@@ -34,4 +34,11 @@ public class GlobalExceptionHandler {
         logger.error(errorDetail.toString()); // log error detail
         return new ResponseEntity<>(errorDetail, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(MissingImageException.class)
+    public ResponseEntity<ErrorDetail> handleMissingImageException(MissingImageException ex) {
+        errorDetail = new ErrorDetail(HttpStatus.BAD_REQUEST.value(), ex.getMessage()); // set error detail
+        logger.error(errorDetail.toString()); // log error detail
+        return new ResponseEntity<>(errorDetail, HttpStatus.BAD_REQUEST);
+    }
 }
