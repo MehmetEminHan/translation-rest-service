@@ -32,7 +32,7 @@ public class ComparisonController {
 
         response.setStatus("OK");
         response.setMessage("Comparing images and XLIFF texts");
-        response.setData(responseObject); // Map the responseObject (comparison object) object to RESPONSE object and return as json
+        response.setData(comparisonOperations.getComparison()); // Map the responseObject (comparison object) object to RESPONSE object and return as json
 
         return response;
     }

@@ -8,6 +8,7 @@ import com.neuroval.translationApi.model.xliff.xliff_2_0.Xliff_2_0;
 import com.neuroval.translationApi.repository.ComparisonRepository;
 import com.neuroval.translationApi.services.image.ImageOperations;
 import com.neuroval.translationApi.services.xliff.XliffOperations;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+@Data
 @Service
 public class ComparisonOperations {
 
