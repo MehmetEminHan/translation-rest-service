@@ -17,7 +17,7 @@ import java.io.IOException;
 @RestController
 @Getter
 @Setter
-@RequestMapping("neuroval/translation/validation")
+@RequestMapping("translation/validation")
 public class TypoController {
 
     @Autowired
