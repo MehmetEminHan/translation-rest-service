@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("neuroval/translation/validation/comparison")
+@RequestMapping("translation/validation/comparison")
 public class ComparisonController {
 
     @Autowired

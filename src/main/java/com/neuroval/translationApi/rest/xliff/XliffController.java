@@ -25,7 +25,7 @@ import jakarta.xml.bind.JAXBException;
 @RestController
 @Getter
 @Setter
-@RequestMapping("neuroval/translation/validation/xliff")
+@RequestMapping("translation/validation/xliff")
 public class XliffController {
 
     @Autowired
