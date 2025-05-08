@@ -19,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("neuroval/translation/validation/image")
+@RequestMapping("translation/validation/image")
 public class ImageController {
 
     @Autowired
