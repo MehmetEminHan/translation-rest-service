@@ -1,6 +1,7 @@
 package com.neuroval.translationApi.rest.image;
 
 import com.neuroval.translationApi.model.image.Image;
+import com.neuroval.translationApi.model.image.TesseractLanguages;
 import com.neuroval.translationApi.model.response.Response;
 import com.neuroval.translationApi.model.xliff.Xliff;
 import com.neuroval.translationApi.model.xliff.xliff_1_2.Xliff_1_2;
@@ -9,6 +10,7 @@ import com.neuroval.translationApi.services.exception.CorruptedFileException;
 import com.neuroval.translationApi.services.exception.InvalidFileTypeException;
 import com.neuroval.translationApi.services.exception.MissingXliffException;
 import com.neuroval.translationApi.services.image.ImageOperations;
+import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,6 +34,8 @@ public class ImageController {
     private Xliff xliff;
     @Autowired
     private ImageOperations imageOperations;
+    @Autowired
+    private TesseractLanguages tesseract;
 
 
     private static final Logger logger = LogManager.getLogger(ImageController.class);
@@ -69,6 +73,19 @@ public class ImageController {
                 throw new InvalidFileTypeException(imageOperations.getFileFormat(imageFile)); // Throw an Invalid File Type Exception if user try to upload file format different then .png
             }
         }
+        return response;
+    }
+
+    /**
+     * Returns the tesseract language code for translation/validation/image/upload endpoint's LanguageCode header value
+     * @return
+     */
+    @GetMapping("/language_codes")
+    public Response getLanguageCodes() {
+        response = new Response(); // Initialize the new response object and map the json response to response object
+        response.setStatus("successful");
+        response.setMessage("Language Codes returned successfully!");
+        response.setData(TesseractLanguages.getLanguageCodes());
         return response;
     }
 }
