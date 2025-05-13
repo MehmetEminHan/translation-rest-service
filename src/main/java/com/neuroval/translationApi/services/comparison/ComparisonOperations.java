@@ -1,6 +1,7 @@
 package com.neuroval.translationApi.services.comparison;
 
 import com.neuroval.translationApi.model.comparison.Comparison;
+import com.neuroval.translationApi.model.xliff.Body;
 import com.neuroval.translationApi.model.xliff.Xliff;
 import com.neuroval.translationApi.model.image.Image;
 import com.neuroval.translationApi.model.xliff.xliff_1_2.Xliff_1_2;
@@ -24,6 +25,8 @@ public class ComparisonOperations {
     private Comparison comparison;
     @Autowired
     private Xliff xliff;
+    @Autowired
+    private Body body;
     @Autowired
     private Xliff_1_2 xliff_1_2;
     @Autowired
@@ -113,15 +116,15 @@ public class ComparisonOperations {
 
         // Create a new list contains transunit target language
         try {
-            if (xliff.getFile() != null) {
-                targetText = xliff.getFile().getBody().getTransUnitList().get(i).getTarget();
+            //if (xliff.getFile() != null) {
+                targetText = body.getTransUnitList().get(i).getTarget();
 
-            } else if (xliff_1_2.getFile() != null) {
-                targetText = xliff_1_2.getFile().getBody().getTransUnitList().get(i).getTarget();
+            //} else if (xliff_1_2.getFile() != null) {
+                //targetText = xliff_1_2.getFile().getBody().getTransUnitList().get(i).getTarget();
 
-            } else if (xliff_2_0.getFile() != null) {
-                targetText = xliff_2_0.getFile().getBody().getTransUnitList().get(i).getTarget();
-            }
+            //} else if (xliff_2_0.getFile() != null) {
+             //   targetText = xliff_2_0.getFile().getBody().getTransUnitList().get(i).getTarget();
+           // }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -133,13 +136,13 @@ public class ComparisonOperations {
 
         try {
             // Create a new list contains transunit target language
-            if (xliff.getFile() != null) {
-                transUnitListSize = xliff.getFile().getBody().getTransUnitList().size();
-            } else if (xliff_1_2.getFile() != null) {
-                transUnitListSize = xliff_1_2.getFile().getBody().getTransUnitList().size();
-            } else if (xliff_2_0.getFile() != null) {
-                transUnitListSize = xliff_2_0.getFile().getBody().getTransUnitList().size();
-            }
+           // if (xliff.getFile() != null) {
+                transUnitListSize = body.getTransUnitList().size();
+            //} else if (xliff_1_2.getFile() != null) {
+            //    transUnitListSize = xliff_1_2.getFile().getBody().getTransUnitList().size();
+          //  } else if (xliff_2_0.getFile() != null) {
+           //     transUnitListSize = xliff_2_0.getFile().getBody().getTransUnitList().size();
+          //  }
         } catch (Exception e) {
             e.printStackTrace();
         }
