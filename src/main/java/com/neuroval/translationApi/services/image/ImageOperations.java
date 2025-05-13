@@ -24,7 +24,7 @@ import java.util.List;
 public class ImageOperations {
 
     @Autowired
-    private Image image;
+    private Image image = new Image();
     @Autowired
     private Comparison comparison;
     @Autowired
@@ -138,7 +138,7 @@ public class ImageOperations {
      * Map image to image entity
      */
     public void mapToImageEntity(){
-        image = new Image(); // Create new object of image
+         // Create new object of image
         image.setTextList(imageTextList);
         image.setText(extractedText); // Set extracted text from image to image object
         image.setImageData(imageBytes); // Set image binaries to image object

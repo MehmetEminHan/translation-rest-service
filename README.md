@@ -15,6 +15,7 @@ untranslated segments for translation testing.
 - Jakarta xml bind 4.0.0
 - Tesseract OCR 5.11.0
 - Log4j 1.2.17
+- LanguageTool 5.9 / LanguageToolAll 5.9
 
 ## Prerequisites
 
