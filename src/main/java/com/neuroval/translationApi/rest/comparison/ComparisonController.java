@@ -2,6 +2,7 @@ package com.neuroval.translationApi.rest.comparison;
 
 import com.neuroval.translationApi.model.image.Image;
 import com.neuroval.translationApi.model.response.Response;
+import com.neuroval.translationApi.model.xliff.Body;
 import com.neuroval.translationApi.model.xliff.Xliff;
 import com.neuroval.translationApi.model.xliff.xliff_1_2.Xliff_1_2;
 import com.neuroval.translationApi.model.xliff.xliff_2_0.Xliff_2_0;
@@ -21,11 +22,7 @@ public class ComparisonController {
     @Autowired
     private ComparisonOperations comparisonOperations;
     @Autowired
-    private Xliff xliff;
-    @Autowired
-    private Xliff_1_2 xliff_1_2;
-    @Autowired
-    private Xliff_2_0 xliff_2_0;
+    private Body body;
     @Autowired
     private Image image;
 
@@ -45,7 +42,7 @@ public class ComparisonController {
         if (image.getText() == null) throw new MissingImageException();
 
         // if xliff object is null throw missing xliff object exception
-        else if (xliff.getFile().getTargetLanguage() == null) throw new MissingXliffException();
+        else if (body.getTransUnitList() == null) throw new MissingXliffException();
 
         // else perform a comparison and return response object
         else {

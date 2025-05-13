@@ -2,14 +2,12 @@ package com.neuroval.translationApi.model.xliff;
 
 import lombok.Data;
 import jakarta.xml.bind.annotation.*;
-import org.springframework.stereotype.Component;
-
 import javax.xml.namespace.QName;
 import java.util.Map;
 
 @Data
 @XmlAccessorType(XmlAccessType.FIELD)
-@Component
+
 public class TransUnit {
     //Elements
     @XmlElement
@@ -21,6 +19,11 @@ public class TransUnit {
     //Attributes
     @XmlAnyAttribute
     private Map<QName, String> otherAttributes;
+
+    public TransUnit(String source, String target) {
+        this.source = source;
+        this.target = target;
+    }
 
     @Override
     public String toString() {

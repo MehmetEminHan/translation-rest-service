@@ -8,8 +8,8 @@ public enum ErrorMessage {
     INVALID_FILE_TYPE_2(", please upload .xliff file!"),
     INVALID_FILE_TYPE_3(", please upload .png file!"),
     CURROPTED_PNG_FILE("Uploaded .png file is corrupted, please upload .png file!"),
-    MISSING_XLIFF("Please send first a xliff file to: neuroval/translatition/validation/xliff/upload/translation"),
-    MISSING_IMAGE("Please send first a image file to: neuroval/translation/validation/image/upload");
+    MISSING_XLIFF("Please send first a xliff file to: /translatition/validation/xliff/upload/translation"),
+    MISSING_IMAGE("Please send first a image file to: /translation/validation/image/upload");
 
 
     private final String message;
