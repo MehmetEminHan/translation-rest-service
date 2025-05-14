@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -38,6 +39,7 @@ public class ImageOperations {
 
     /**
      * Extract text from the image using tesseract
+     *
      * @param multipartFile
      * @param languageCode
      * @return
@@ -46,34 +48,49 @@ public class ImageOperations {
      */
     public String extractTextFromImage(MultipartFile multipartFile, String languageCode) throws IOException, TesseractException {
 
-        File tempFile = convertMultipartFileToFile(multipartFile); // Convert MultipartFile to File
+        // Convert MultipartFile to File
+        File tempFile = convertMultipartFileToFile(multipartFile);
 
-        String osName = System.getProperty("os.name"); // Get the os name
+        // Get the os name
+        String osName = System.getProperty("os.name");
         logger.info("Detected OS Name is: {}", osName);
 
-        Tesseract tesseract = new Tesseract();  // Initialize Tesseracts
+        // Initialize Tesseracts
+        Tesseract tesseract = new Tesseract();
 
         // Assign tesseract datapath based on OS system
-        if(osName.toLowerCase().contains("windows")) {
-            tesseract.setDatapath("C:/Program Files/Tesseract-OCR/tessdata"); // Set Tesseract data path windows
-        }else if(osName.toLowerCase().contains("linux")) {
-            tesseract.setDatapath("/usr/share/tesseract-ocr/5/tessdata"); // Set Tesseract data path ubuntu
+        if (osName.toLowerCase().contains("windows")) {
+
+            // Set Tesseract data path windows
+            tesseract.setDatapath("C:/Program Files/Tesseract-OCR/tessdata");
+
+        } else if (osName.toLowerCase().contains("linux")) {
+
+            // Set Tesseract data path ubuntu
+            tesseract.setDatapath("/usr/share/tesseract-ocr/5/tessdata");
+
         }
 
-        tesseract.setLanguage(languageCode); // Set language
+        // Set language
+        tesseract.setLanguage(languageCode);
         logger.info("Tesseract language set to {}", languageCode);
 
-        extractedText = tesseract.doOCR(tempFile); // Perform OCR
+        // Perform OCR
+        extractedText = tesseract.doOCR(tempFile);
         logger.info("Extracted text from image is: {}", extractedText);
 
-        tempFile.delete(); // Delete temp file after processing
+        // Delete temp file after processing
+        tempFile.delete();
 
-        mapper(extractedText); // Map the extracted text to Java object
+        // Map the extracted text to Java object
+        mapper(extractedText);
 
         //imageTextList = splitWords(extractedText); // Split the words
-        imageTextList.addAll(splitWords(extractedText)); // Split the words
+        // Split the words
+        imageTextList.addAll(splitWords(extractedText));
 
-        imageBytes = multipartFile.getBytes(); // Save image bytes
+        // Save image bytes
+        imageBytes = multipartFile.getBytes();
 
         logger.warn("The text successfully extracted from image is: {}", extractedText);
 
@@ -82,6 +99,7 @@ public class ImageOperations {
 
     /**
      * Convert multiple part file to single file
+     *
      * @param file
      * @return
      * @throws IOException
@@ -98,67 +116,80 @@ public class ImageOperations {
 
     /**
      * Map the extracted text to Image JAVA object
+     *
      * @param text
      * @return
      */
-    public String mapper(String text){
+    public String mapper(String text) {
         image.setText(text);
         logger.info("Extracted text deserialized to imageText:", image.getText());
-
         return image.getText();
     }
 
     /**
      * Split the words from entire string and map them to a List
+     *
      * @param text
      * @return
      */
-    public List<String> splitWords(String text){
-        String[] wordsArray = text.split("\\s+");  // Split the string by spaces
+    public List<String> splitWords(String text) {
 
-        List<String> wordsList = new ArrayList<>(Arrays.asList(wordsArray));  // Convert array to ArrayList
+        // Split the string by spaces
+        String[] wordsArray = text.split("\\s+");
+
+        // Convert array to ArrayList
+        List<String> wordsList = new ArrayList<>(Arrays.asList(wordsArray));
 
         logger.info("Split words: {}", wordsList);
 
-        image.setTextList(wordsList);  // Set image word list
+        // Set image word list
+        image.setTextList(wordsList);
 
         return wordsList;
     }
 
     /**
      * Find the uploaded image file format and return it
+     *
      * @param imageFile
      * @return
      */
-    public String getFileFormat(MultipartFile imageFile){
-        fileFormat = imageFile.getOriginalFilename().substring(imageFile.getOriginalFilename().lastIndexOf(".")); // Get file format and set to fileFormat;
+    public String getFileFormat(MultipartFile imageFile) {
+
+        // Get file format and set to fileFormat;
+        fileFormat = imageFile.getOriginalFilename().substring(imageFile.getOriginalFilename().lastIndexOf("."));
         return fileFormat;
     }
 
     /**
      * Map image to image entity
      */
-    public void mapToImageEntity(){
-         // Create new object of image
+    public void mapToImageEntity() {
+        // Create new object of image
         image.setTextList(imageTextList);
-        image.setText(extractedText); // Set extracted text from image to image object
-        image.setImageData(imageBytes); // Set image binaries to image object
-        image.setImageType(imageRepository.findImageTypeRecnumByTypeName(fileFormat.toUpperCase())); // Find the corresponding image type from IMAGE_TYPE table and set to image entity
-        comparison.setImageWords(extractedText); // Set extracted text from image to comparison object
+
+        // Set extracted text from image to image object
+        image.setText(extractedText);
+
+        // Set image binaries to image object
+        image.setImageData(imageBytes);
+
+        // Find the corresponding image type from IMAGE_TYPE table and set to image entity
+        image.setImageType(imageRepository.findImageTypeRecnumByTypeName(fileFormat.toUpperCase()));
+
+        // Set extracted text from image to comparison object
+        comparison.setImageWords(extractedText);
         logger.info("uploaded image successfully mapped to IMAGE entity", image.toString());
-        imageTextList = new ArrayList<>(); // reset the imagetextlist after every object mapping
+
+        // reset the imagetextlist after every object mapping
+        imageTextList = new ArrayList<>();
     }
 
     /**
      * Save image entity to database
      */
-    public void saveImageToDatabase(){
+    public void saveImageToDatabase() {
         imageRepository.save(image);
         logger.info("Extracted text from image successfully saved to database");
     }
-
-
-
-
-
 }

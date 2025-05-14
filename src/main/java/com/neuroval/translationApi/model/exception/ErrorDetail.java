@@ -4,7 +4,6 @@ package com.neuroval.translationApi.model.exception;
 import lombok.Getter;
 import lombok.Setter;
 
-
 import java.time.LocalDateTime;
 
 @Getter

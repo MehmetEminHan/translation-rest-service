@@ -1,9 +1,9 @@
 package com.neuroval.translationApi.services.comparison;
 
 import com.neuroval.translationApi.model.comparison.Comparison;
+import com.neuroval.translationApi.model.image.Image;
 import com.neuroval.translationApi.model.xliff.Body;
 import com.neuroval.translationApi.model.xliff.Xliff;
-import com.neuroval.translationApi.model.image.Image;
 import com.neuroval.translationApi.model.xliff.xliff_1_2.Xliff_1_2;
 import com.neuroval.translationApi.model.xliff.xliff_2_0.Xliff_2_0;
 import com.neuroval.translationApi.repository.ComparisonRepository;
@@ -48,6 +48,7 @@ public class ComparisonOperations {
 
     /**
      * Compare serialized XLIFF file and serialized uploaded screenshot and return non-matched words
+     *
      * @return
      */
     public Object compareXliffAndImage() {
@@ -58,10 +59,15 @@ public class ComparisonOperations {
         String targetText = "";
 
         for (int i = 0; i < getTransUnitListSize(); i++) {
+
             targetText = getTargetText(i);
-            String[] words = targetText.split("\\s+"); // Splits the target text by whitespace
+
+            // Splits the target text by whitespace
+            String[] words = targetText.split("\\s+");
             for (String word : words) {
-                xliffTargetTextList.add(word); // Add each word individually
+
+                // Add each word individually
+                xliffTargetTextList.add(word);
             }
         }
 
@@ -108,6 +114,7 @@ public class ComparisonOperations {
 
     /**
      * Return the target text of the transunit file in the desired index within the specified xliff file.
+     *
      * @param i
      * @return
      */
@@ -117,14 +124,14 @@ public class ComparisonOperations {
         // Create a new list contains transunit target language
         try {
             //if (xliff.getFile() != null) {
-                targetText = body.getTransUnitList().get(i).getTarget();
+            targetText = body.getTransUnitList().get(i).getTarget();
 
             //} else if (xliff_1_2.getFile() != null) {
-                //targetText = xliff_1_2.getFile().getBody().getTransUnitList().get(i).getTarget();
+            //targetText = xliff_1_2.getFile().getBody().getTransUnitList().get(i).getTarget();
 
             //} else if (xliff_2_0.getFile() != null) {
-             //   targetText = xliff_2_0.getFile().getBody().getTransUnitList().get(i).getTarget();
-           // }
+            //   targetText = xliff_2_0.getFile().getBody().getTransUnitList().get(i).getTarget();
+            // }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -136,13 +143,13 @@ public class ComparisonOperations {
 
         try {
             // Create a new list contains transunit target language
-           // if (xliff.getFile() != null) {
-                transUnitListSize = body.getTransUnitList().size();
+            // if (xliff.getFile() != null) {
+            transUnitListSize = body.getTransUnitList().size();
             //} else if (xliff_1_2.getFile() != null) {
             //    transUnitListSize = xliff_1_2.getFile().getBody().getTransUnitList().size();
-          //  } else if (xliff_2_0.getFile() != null) {
-           //     transUnitListSize = xliff_2_0.getFile().getBody().getTransUnitList().size();
-          //  }
+            //  } else if (xliff_2_0.getFile() != null) {
+            //     transUnitListSize = xliff_2_0.getFile().getBody().getTransUnitList().size();
+            //  }
         } catch (Exception e) {
             e.printStackTrace();
         }

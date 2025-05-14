@@ -9,8 +9,6 @@ import java.util.Map;
 @Data
 @Component
 public class Typo {
-
     private List<String> text;
-    private Map<String,List<String>> suggestedCorrection;
-
+    private Map<String, List<String>> suggestedCorrection;
 }

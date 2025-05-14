@@ -6,6 +6,6 @@ import javax.imageio.IIOException;
 
 public class CorruptedFileException extends IIOException {
     public CorruptedFileException(String exceptionMessage) {
-        super(ErrorMessage.CURROPTED_PNG_FILE.getMessage() + " Exception:" +exceptionMessage);
+        super(ErrorMessage.CORRUPTED_PNG_FILE.getMessage() + " Exception:" +exceptionMessage);
     }
 }

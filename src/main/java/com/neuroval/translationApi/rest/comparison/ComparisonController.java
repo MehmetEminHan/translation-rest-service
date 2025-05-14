@@ -3,9 +3,6 @@ package com.neuroval.translationApi.rest.comparison;
 import com.neuroval.translationApi.model.image.Image;
 import com.neuroval.translationApi.model.response.Response;
 import com.neuroval.translationApi.model.xliff.Body;
-import com.neuroval.translationApi.model.xliff.Xliff;
-import com.neuroval.translationApi.model.xliff.xliff_1_2.Xliff_1_2;
-import com.neuroval.translationApi.model.xliff.xliff_2_0.Xliff_2_0;
 import com.neuroval.translationApi.services.comparison.ComparisonOperations;
 import com.neuroval.translationApi.services.exception.MissingImageException;
 import com.neuroval.translationApi.services.exception.MissingXliffException;
@@ -36,7 +33,9 @@ public class ComparisonController {
      */
     @GetMapping("/compare")
     public Response compareImageTextAndXliffText() {
-        response = new Response(); // Initialize the new response object and map the json response to response object
+
+        // Initialize the new response object and map the json response to response object
+        response = new Response();
 
         // if image object is null throw missing image exception
         if (image.getText() == null) throw new MissingImageException();
@@ -46,13 +45,20 @@ public class ComparisonController {
 
         // else perform a comparison and return response object
         else {
-            responseObject = comparisonOperations.compareXliffAndImage(); // Compare FILE text with IMAGE text and set to responseObject
-            comparisonOperations.mapToFileEntity(); // map the extracted FILE text and IMAGE text to COMPARISON object
-            comparisonOperations.saveComparisonToDatabase(); // Save the COMPARISON object to database
 
+            // Compare FILE text with IMAGE text and set to responseObject
+            responseObject = comparisonOperations.compareXliffAndImage();
+
+            // map the extracted FILE text and IMAGE text to COMPARISON object
+            comparisonOperations.mapToFileEntity();
+
+            // Save the COMPARISON object to database
+            comparisonOperations.saveComparisonToDatabase();
+
+            // Map the responseObject (comparison object) object to RESPONSE object and return as json
             response.setStatus("OK");
             response.setMessage("Comparing images and XLIFF texts");
-            response.setData(comparisonOperations.getComparison()); // Map the responseObject (comparison object) object to RESPONSE object and return as json
+            response.setData(comparisonOperations.getComparison());
 
             return response;
         }

@@ -25,15 +25,15 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Data
@@ -102,6 +102,7 @@ public class XliffOperations {
      */
     public List<TransUnit_1_2> mapper_1_2(MultipartFile file) {
         try (InputStream inputStream = file.getInputStream()) {
+
             // Create XMLStreamReader to read the file
             XMLInputFactory factory = XMLInputFactory.newInstance();
             XMLStreamReader reader = factory.createXMLStreamReader(inputStream);
@@ -346,5 +347,4 @@ public class XliffOperations {
         // 6. Return an empty string if the tag or its value is not found
         return "";
     }
-
 }

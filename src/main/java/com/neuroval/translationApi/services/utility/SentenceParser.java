@@ -1,9 +1,10 @@
 package com.neuroval.translationApi.services.utility;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SentenceParser {
-    public static List<String> parse(String inputText){
+    public static List<String> parse(String inputText) {
 
         // Create a List to store the sentences
         List<String> sentencesList = new ArrayList<>();
@@ -13,9 +14,13 @@ public class SentenceParser {
 
         // Add sentences to the List
         for (String sentence : sentencesArray) {
-            sentence = sentence.trim();  // Remove leading/trailing spaces
+
+            // Remove leading/trailing spaces
+            sentence = sentence.trim();
             if (!sentence.isEmpty()) {
-                sentencesList.add(sentence);  // Add non-empty sentences to the list
+
+                // Add non-empty sentences to the list
+                sentencesList.add(sentence);
             }
         }
 
