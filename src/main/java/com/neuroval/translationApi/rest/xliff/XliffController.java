@@ -1,25 +1,26 @@
 package com.neuroval.translationApi.rest.xliff;
 
 import com.neuroval.translationApi.model.response.Response;
+import com.neuroval.translationApi.model.xliff.TransUnit;
 import com.neuroval.translationApi.model.xliff.xliff_1_2.TransUnit_1_2;
 import com.neuroval.translationApi.model.xliff.xliff_2_0.TransUnit_2_0;
 import com.neuroval.translationApi.services.exception.InvalidFileTypeException;
-import com.neuroval.translationApi.model.xliff.TransUnit;
 import com.neuroval.translationApi.services.xliff.XliffOperations;
 import jakarta.transaction.Transactional;
+import jakarta.xml.bind.JAXBException;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-
-
-import jakarta.xml.bind.JAXBException;
 
 
 @RestController
@@ -51,20 +52,27 @@ public class XliffController {
     @Transactional
     public Response uploadXliff(@RequestParam("file") MultipartFile file) throws IOException, JAXBException {
 
-        response = new Response(); // Initialize the new response object and map the json response to response object
+        // Initialize the new response object and map the json response to response object
+        response = new Response();
 
         if (xliffOperations.getFileFormat(file).toLowerCase().equals(".xliff")) {
 
-            xliffOperations.mapToFileEntity(file); // map the uploaded xliff file to XLIFF object
-            xliffOperations.saveXliffToDatabase(); // Save the XLIFF object to database
+            // map the uploaded xliff file to XLIFF object
+            xliffOperations.mapToFileEntity(file);
 
+            // Save the XLIFF object to database
+            xliffOperations.saveXliffToDatabase();
+
+            // Map the XLIFF object transunit list to RESPONSE object and return as json
             response.setStatus("Success");
             response.setMessage("Successfully uploaded xliff");
-            response.setData(xliffOperations.getTranslation()); // Map the XLIFF object transunit list to RESPONSE object and return as json
+            response.setData(xliffOperations.getTranslation());
 
             return response;
         } else {
-            throw new InvalidFileTypeException(xliffOperations.getFileFormat(file)); // Throw an Invalid File Type Exception if user try to upload file format different then .xliff
+
+            // Throw an Invalid File Type Exception if user try to upload file format different then .xliff
+            throw new InvalidFileTypeException(xliffOperations.getFileFormat(file));
         }
     }
 
@@ -75,8 +83,11 @@ public class XliffController {
      */
     @PostMapping("/isAwake")
     public Response isAwake() {
+
+        // Initialize the new response object and map the json response to response object
         response = new Response();
 
+        // Map the XLIFF object transunit list to RESPONSE object and return as json
         response.setStatus("Success");
         response.setMessage("neuroval/translation/validation/xliff/upload endpoint is awake!");
         response.setData(null);
