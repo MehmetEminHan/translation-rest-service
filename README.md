@@ -43,13 +43,15 @@ translationApi/
 
 ## XLIFF - API Endpoints
 
-| Method | Endpoint                                     | Headers                               | Form-Data         | Description                                                                                                                                              |
-|--------|----------------------------------------------|---------------------------------------|-------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|
-| POST   | /translation/validation/xliff/upload/image   | LanguageCode: tesseract language code | image: .png file  | Detects and extracts text from a PNG image using Tesseract OCR. The LanguageCode must match the image's language and be a valid Tesseract language code. |
-| POST   | /translation/validation/xliff/upload         | N/A                                   | file: .xliff file | Extracts all target language words/strings from the uploaded XLIFF translation file.                                                                     |
-| GET    | /translation/validation/comparison/compare   | N/A                                   | N/A               | Compare serialized translation file and uploaded image                                                                                                   |
-| POST   | /translation/validation/xliff/upload/isAwake | N/A                                   | N/A               | Returns status of the endpoint                                                                                                                           |
-| GET    | /translation/validation/image/typo           | N/A                                   | N/A               | Detects typo in the uploaded image                                                                                                                       |
+| Method | Endpoint                                     | Headers      | Form-Data         | Description                                                                                                                                                |
+|--------|----------------------------------------------|--------------|-------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| POST   | /translation/validation/xliff/upload         | LanguageCode | file: .xliff file | Extracts all target language words/strings from the uploaded XLIFF translation file.                                                                       |
+| POST   | /translation/validation/image/upload         | LanguageCode | image: .png file  | Detects and extracts text from a PNG image using Tesseract OCR. The LanguageCode must match the image's language and be a valid Tesseract language code    |
+| POST   | /translation/validation/image/multi-upload   | LanguageCode | image: .png file  | Detects and extracts text from a PNG image(s) using Tesseract OCR. The LanguageCode must match the image's language and be a valid Tesseract language code |
+| GET    | /translation/validation/comparison/compare   | N/A          | N/A               | Compare serialized translation file and uploaded image                                                                                                     |
+| POST   | /translation/validation/xliff/upload/isAwake | N/A          | N/A               | Returns status of the endpoint                                                                                                                             |
+| GET    | /translation/validation/image/typo           | N/A          | N/A               | Detects typo in the uploaded image                                                                                                                         |
+| GET    | /translation/validation/image/language_codes | N/A          | N/A               | Returns supported tesseract language codes                                                                                                                 |
 
 ## Notes for Dev
 
