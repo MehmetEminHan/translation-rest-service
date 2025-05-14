@@ -32,7 +32,7 @@ public class ImageOperations {
 
     private byte[] imageBytes;
     private String fileFormat;
-    private List<String> imageTextList;
+    private List<String> imageTextList = new ArrayList<>();
     private String extractedText = "";
     private static final Logger logger = Log.getLogger(ImageOperations.class);
 
@@ -70,7 +70,8 @@ public class ImageOperations {
 
         mapper(extractedText); // Map the extracted text to Java object
 
-        imageTextList = splitWords(extractedText); // Split the words
+        //imageTextList = splitWords(extractedText); // Split the words
+        imageTextList.addAll(splitWords(extractedText)); // Split the words
 
         imageBytes = multipartFile.getBytes(); // Save image bytes
 
@@ -145,6 +146,7 @@ public class ImageOperations {
         image.setImageType(imageRepository.findImageTypeRecnumByTypeName(fileFormat.toUpperCase())); // Find the corresponding image type from IMAGE_TYPE table and set to image entity
         comparison.setImageWords(extractedText); // Set extracted text from image to comparison object
         logger.info("uploaded image successfully mapped to IMAGE entity", image.toString());
+        imageTextList = new ArrayList<>(); // reset the imagetextlist after every object mapping
     }
 
     /**

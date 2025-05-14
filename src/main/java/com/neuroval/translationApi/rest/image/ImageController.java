@@ -10,7 +10,6 @@ import com.neuroval.translationApi.services.exception.CorruptedFileException;
 import com.neuroval.translationApi.services.exception.InvalidFileTypeException;
 import com.neuroval.translationApi.services.exception.MissingXliffException;
 import com.neuroval.translationApi.services.image.ImageOperations;
-import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -72,6 +71,54 @@ public class ImageController {
             }else{
                 throw new InvalidFileTypeException(imageOperations.getFileFormat(imageFile)); // Throw an Invalid File Type Exception if user try to upload file format different then .png
             }
+        }
+        return response;
+    }
+
+    /**
+     * Handles the upload of an image file containing text and extracts the text, converting it into a Java String.
+     * @param imageFiles
+     * @param languageCode
+     * @return  Map<String, Object> representing the extracted text from image as String or throw an exceptions below if processing fails.
+     * @throws IOException
+     * @throws TesseractException
+     */
+    @PostMapping("/multi-upload")
+    public Response uploadMultipleImage(@RequestParam("images") MultipartFile[] imageFiles, @RequestHeader("LanguageCode") String languageCode) throws IOException {
+        response = new Response(); // Initialize the new response object and map the json response to response object
+
+        if (imageFiles == null || imageFiles.length == 0) {
+            response.setStatus("error");
+            response.setMessage("No images selected!");
+            response.setData(imageOperations.getImage());
+            return response;
+        }
+
+        for (MultipartFile imageFile : imageFiles) {
+            if (imageOperations.getFileFormat(imageFile).equalsIgnoreCase(".png")){
+                try {
+                    imageOperations.extractTextFromImage(imageFile, languageCode); // Extract the text from the image using the Tesseract software
+                }catch (Exception e){
+                    throw new CorruptedFileException(e.getMessage());
+                }
+            }else{
+                throw new InvalidFileTypeException(imageOperations.getFileFormat(imageFile)); // Throw an Invalid File Type Exception if user try to upload file format different then .png
+            }
+        }
+
+        imageOperations.mapToImageEntity();  // map the extracted IMAGE text to IMAGE object
+        imageOperations.getImage().setLanguageCode(languageCode);
+        imageOperations.saveImageToDatabase(); // Save the IMAGE object to database
+
+        response.setStatus("successful");
+        response.setMessage("Image extracted successfully!");
+        response.setData(imageOperations.getImage()); // Map the IMAGE object to RESPONSE object and return as json
+
+
+        if (xliff == null && xliff_1_2 == null && xliff_2_0 == null){
+            throw new MissingXliffException(); // Throw a Missing file exception if user didn't upload any .xliff file
+        }else{
+
         }
         return response;
     }
