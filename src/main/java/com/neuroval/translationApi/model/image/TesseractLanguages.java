@@ -1,7 +1,6 @@
 package com.neuroval.translationApi.model.image;
 
 
-import lombok.Getter;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;

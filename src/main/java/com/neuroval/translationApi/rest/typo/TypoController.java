@@ -21,6 +21,8 @@ import java.io.IOException;
 public class TypoController {
 
     @Autowired
+    private Translation translation;
+    @Autowired
     private TypoOperations typoOperations;
     @Autowired
     private XliffOperations xliffOperations;
@@ -28,16 +30,17 @@ public class TypoController {
     private ImageOperations imageOperations;
 
     private Response response;
-    @Autowired
-    private Translation translation;
 
     @GetMapping("/image/typo")
     public Response findTypoFromImage() throws IOException {
+
+        // Initialize the new response object and map the json response to response object
         response = new Response();
 
         typoOperations.typoFinderEnglish(imageOperations.getImage().getText());
         typoOperations.mapToTypoEntity();
 
+        // Map the Typo object to RESPONSE object and return as json
         response.setMessage("Possible spelling mistake found.");
         response.setStatus("Success");
         response.setData(typoOperations.getTypo());

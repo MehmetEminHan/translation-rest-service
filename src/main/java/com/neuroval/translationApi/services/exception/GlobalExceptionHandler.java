@@ -41,4 +41,11 @@ public class GlobalExceptionHandler {
         logger.error(errorDetail.toString()); // log error detail
         return new ResponseEntity<>(errorDetail, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(MissingMultiImageException.class)
+    public ResponseEntity<ErrorDetail> handleMissingMultiImageException(MissingMultiImageException ex) {
+        errorDetail = new ErrorDetail(HttpStatus.BAD_REQUEST.value(), ex.getMessage()); // set error detail
+        logger.error(errorDetail.toString()); // log error detail
+        return new ResponseEntity<>(errorDetail, HttpStatus.BAD_REQUEST);
+    }
 }
