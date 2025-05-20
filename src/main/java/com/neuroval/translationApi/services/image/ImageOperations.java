@@ -53,7 +53,7 @@ public class ImageOperations {
 
         // Get the os name
         String osName = System.getProperty("os.name");
-        logger.info("Detected OS Name is: {}", osName);
+        logger.warn("Detected system OS is: {}", osName);
 
         // Initialize Tesseracts
         Tesseract tesseract = new Tesseract();
@@ -63,24 +63,27 @@ public class ImageOperations {
 
             // Set Tesseract data path windows
             tesseract.setDatapath("C:/Program Files/Tesseract-OCR/tessdata");
+            logger.warn("Tesseract datapath is: \"C:/Program Files/Tesseract-OCR/tessdata\"");
 
         } else if (osName.toLowerCase().contains("linux")) {
 
             // Set Tesseract data path ubuntu
             tesseract.setDatapath("/usr/share/tesseract-ocr/5/tessdata");
+            logger.warn("Tesseract datapath is: /usr/share/tesseract-ocr/5/tessdata");
 
         }
 
         // Set language
         tesseract.setLanguage(languageCode);
-        logger.info("Tesseract language set to {}", languageCode);
+        logger.warn("Tesseract language is: {}", languageCode);
 
         // Perform OCR
         extractedText = tesseract.doOCR(tempFile);
-        logger.info("Extracted text from image is: {}", extractedText);
+        logger.warn("OCR has been performed!\nImage has been processed!");
 
         // Delete temp file after processing
         tempFile.delete();
+        logger.warn("Temp file has been deleted!");
 
         // Map the extracted text to Java object
         mapper(extractedText);
@@ -91,8 +94,9 @@ public class ImageOperations {
 
         // Save image bytes
         imageBytes = multipartFile.getBytes();
+        logger.info("Image has been processed!");
 
-        logger.warn("The text successfully extracted from image is: {}", extractedText);
+        logger.warn("The text successfully extracted from the image: {}", extractedText);
 
         return extractedText;
     }
@@ -140,7 +144,7 @@ public class ImageOperations {
         // Convert array to ArrayList
         List<String> wordsList = new ArrayList<>(Arrays.asList(wordsArray));
 
-        logger.info("Split words: {}", wordsList);
+        logger.info("Words has been split!");
 
         // Set image word list
         image.setTextList(wordsList);
@@ -158,6 +162,7 @@ public class ImageOperations {
 
         // Get file format and set to fileFormat;
         fileFormat = imageFile.getOriginalFilename().substring(imageFile.getOriginalFilename().lastIndexOf("."));
+        logger.warn("image file format is: {}", fileFormat);
         return fileFormat;
     }
 
@@ -190,6 +195,6 @@ public class ImageOperations {
      */
     public void saveImageToDatabase() {
         imageRepository.save(image);
-        logger.info("Extracted text from image successfully saved to database");
+        logger.warn("Extracted text from image successfully saved to database!");
     }
 }

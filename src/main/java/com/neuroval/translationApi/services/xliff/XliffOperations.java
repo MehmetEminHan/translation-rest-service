@@ -261,7 +261,7 @@ public class XliffOperations {
             translation.setSourceLanguageText(sourceText);
             translation.setTargetLanguageText(targetText);
 
-            logger.info("Uploaded Xliff file mapped to java object");
+            logger.warn("Uploaded Xliff file mapped to java object!");
 
             // Return translation
             return translation;

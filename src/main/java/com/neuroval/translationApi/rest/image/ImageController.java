@@ -12,6 +12,7 @@ import com.neuroval.translationApi.services.exception.InvalidFileTypeException;
 import com.neuroval.translationApi.services.exception.MissingMultiImageException;
 import com.neuroval.translationApi.services.exception.MissingXliffException;
 import com.neuroval.translationApi.services.image.ImageOperations;
+import com.neuroval.translationApi.services.log.Log;
 import net.sourceforge.tess4j.TesseractException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,6 +32,7 @@ public class ImageController {
     private ImageOperations imageOperations;
 
     private Response response;
+    private static final Logger logger = Log.getLogger(ImageOperations.class);
 
     /**
      * Handles the upload of an image file containing text and extracts the text, converting it into a Java String.
@@ -50,6 +52,7 @@ public class ImageController {
         // Check if user didn't upload any .xliff file
         if (body.getTransUnitList() == null) {
 
+            logger.error("Missing xliff file");
             // Throw a Missing file exception if user didn't upload any .xliff file
             throw new MissingXliffException();
 
@@ -77,11 +80,13 @@ public class ImageController {
                     response.setData(imageOperations.getImage());
 
                 } catch (Exception e) {
+                    logger.error("Image extract failed", e.getMessage());
                     // If uploaded image is png but tesseract cannot use it throw a corrupted custom exception
                     throw new CorruptedFileException(e.getMessage());
                 }
 
             } else {
+                logger.error("Invalid image type: ", imageOperations.getFileFormat(imageFile));
                 // Throw an Invalid File Type Exception if user try to upload file format different then .png
                 throw new InvalidFileTypeException(imageOperations.getFileFormat(imageFile));
             }

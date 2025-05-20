@@ -70,8 +70,8 @@ public class XliffController {
 
             return response;
         } else {
-
             // Throw an Invalid File Type Exception if user try to upload file format different then .xliff
+            logger.error("Xliff file format is not supported! {}", file.getOriginalFilename());
             throw new InvalidFileTypeException(xliffOperations.getFileFormat(file));
         }
     }
