@@ -5,7 +5,10 @@ import com.neuroval.translationApi.model.response.Response;
 import com.neuroval.translationApi.model.xliff.Body;
 import com.neuroval.translationApi.services.comparison.ComparisonOperations;
 import com.neuroval.translationApi.services.exception.MissingImageException;
-import com.neuroval.translationApi.services.exception.MissingXliffException;
+import com.neuroval.translationApi.services.exception.MissingTranslationException;
+import com.neuroval.translationApi.services.image.ImageOperations;
+import com.neuroval.translationApi.services.json.JsonOperations;
+import com.neuroval.translationApi.services.xliff.XliffOperations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,12 +22,14 @@ public class ComparisonController {
     @Autowired
     private ComparisonOperations comparisonOperations;
     @Autowired
-    private Body body;
+    private XliffOperations xliffOperations;
     @Autowired
-    private Image image;
+    private ImageOperations imageOperations;
 
     private Response response;
     private Object responseObject;
+    @Autowired
+    private JsonOperations jsonOperations;
 
     /**
      * Handles the upload of an image file and an XLIFF file, extracts text from the image, and compares it with the XLIFF content to identify unmatched words.
@@ -38,16 +43,16 @@ public class ComparisonController {
         response = new Response();
 
         // if image object is null throw missing image exception
-        if (image.getText() == null) throw new MissingImageException();
+        if (imageOperations.getImage().getText() == null) throw new MissingImageException();
 
         // if xliff object is null throw missing xliff object exception
-        else if (body.getTransUnitList() == null) throw new MissingXliffException();
+        else if (xliffOperations.getBody() == null && jsonOperations.getJson() == null) throw new MissingTranslationException();
 
         // else perform a comparison and return response object
         else {
 
             // Compare FILE text with IMAGE text and set to responseObject
-            responseObject = comparisonOperations.compareXliffAndImage();
+            responseObject = comparisonOperations.compareTranslationAndImage();
 
             // map the extracted FILE text and IMAGE text to COMPARISON object
             comparisonOperations.mapToFileEntity();

@@ -21,8 +21,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetail, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(MissingXliffException.class)
-    public ResponseEntity<ErrorDetail> handleMissingXliffException(MissingXliffException ex) {
+    @ExceptionHandler(MissingTranslationException.class)
+    public ResponseEntity<ErrorDetail> handleMissingXliffException(MissingTranslationException ex) {
         errorDetail = new ErrorDetail(HttpStatus.BAD_REQUEST.value(), ex.getMessage()); // set error detail
         logger.error(errorDetail.toString()); // log error detail
         return  new ResponseEntity<>(errorDetail, HttpStatus.BAD_REQUEST);
@@ -44,6 +44,20 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MissingMultiImageException.class)
     public ResponseEntity<ErrorDetail> handleMissingMultiImageException(MissingMultiImageException ex) {
+        errorDetail = new ErrorDetail(HttpStatus.BAD_REQUEST.value(), ex.getMessage()); // set error detail
+        logger.error(errorDetail.toString()); // log error detail
+        return new ResponseEntity<>(errorDetail, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(BothXliffandJsonFile.class)
+    public ResponseEntity<ErrorDetail> handleBothXliffandJsonFileException(BothXliffandJsonFile ex) {
+        errorDetail = new ErrorDetail(HttpStatus.BAD_REQUEST.value(), ex.getMessage()); // set error detail
+        logger.error(errorDetail.toString()); // log error detail
+        return new ResponseEntity<>(errorDetail, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidFileTypeHeaderException.class)
+    public ResponseEntity<ErrorDetail> handleInvalidFileTypeHeaderException(InvalidFileTypeHeaderException ex) {
         errorDetail = new ErrorDetail(HttpStatus.BAD_REQUEST.value(), ex.getMessage()); // set error detail
         logger.error(errorDetail.toString()); // log error detail
         return new ResponseEntity<>(errorDetail, HttpStatus.BAD_REQUEST);

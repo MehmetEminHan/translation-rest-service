@@ -1,36 +1,41 @@
 package com.neuroval.translationApi.rest.image;
 
-import com.neuroval.translationApi.model.image.Image;
 import com.neuroval.translationApi.model.image.TesseractLanguages;
 import com.neuroval.translationApi.model.response.Response;
-import com.neuroval.translationApi.model.xliff.Body;
-import com.neuroval.translationApi.model.xliff.Xliff;
-import com.neuroval.translationApi.model.xliff.xliff_1_2.Xliff_1_2;
-import com.neuroval.translationApi.model.xliff.xliff_2_0.Xliff_2_0;
 import com.neuroval.translationApi.services.exception.CorruptedFileException;
 import com.neuroval.translationApi.services.exception.InvalidFileTypeException;
 import com.neuroval.translationApi.services.exception.MissingMultiImageException;
-import com.neuroval.translationApi.services.exception.MissingXliffException;
+import com.neuroval.translationApi.services.exception.MissingTranslationException;
 import com.neuroval.translationApi.services.image.ImageOperations;
+import com.neuroval.translationApi.services.json.JsonOperations;
+import com.neuroval.translationApi.services.log.Log;
+import com.neuroval.translationApi.services.xliff.XliffOperations;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Part;
 import net.sourceforge.tess4j.TesseractException;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("translation/validation/image")
 public class ImageController {
 
     @Autowired
-    private Body body;
+    private XliffOperations xliffOperations;
+    @Autowired
+    private JsonOperations jsonOperations;
     @Autowired
     private ImageOperations imageOperations;
 
     private Response response;
+    private static final Logger logger = Log.getLogger(ImageOperations.class);
 
     /**
      * Handles the upload of an image file containing text and extracts the text, converting it into a Java String.
@@ -48,10 +53,11 @@ public class ImageController {
         response = new Response();
 
         // Check if user didn't upload any .xliff file
-        if (body.getTransUnitList() == null) {
+        if (xliffOperations.getBody().getTransUnitList() == null && jsonOperations.getJson() == null) {
 
+            logger.error("Missing translation file");
             // Throw a Missing file exception if user didn't upload any .xliff file
-            throw new MissingXliffException();
+            throw new MissingTranslationException();
 
         } else {
 
@@ -77,11 +83,13 @@ public class ImageController {
                     response.setData(imageOperations.getImage());
 
                 } catch (Exception e) {
+                    logger.error("Image extract failed", e.getMessage());
                     // If uploaded image is png but tesseract cannot use it throw a corrupted custom exception
                     throw new CorruptedFileException(e.getMessage());
                 }
 
             } else {
+                logger.error("Invalid image type: ", imageOperations.getFileFormat(imageFile));
                 // Throw an Invalid File Type Exception if user try to upload file format different then .png
                 throw new InvalidFileTypeException(imageOperations.getFileFormat(imageFile));
             }
@@ -100,8 +108,7 @@ public class ImageController {
      * @throws TesseractException
      */
     @PostMapping("/multi-upload")
-    public Response uploadMultipleImage(@RequestParam("images") MultipartFile[] imageFiles, @RequestHeader("LanguageCode") String languageCode) throws IOException {
-
+    public Response uploadMultipleImage(@RequestParam(value = "images") MultipartFile[] imageFiles, @RequestHeader("LanguageCode") String languageCode) throws IOException, ServletException {
         // Initialize the new response object and map the json response to response object
         response = new Response();
 
@@ -111,13 +118,13 @@ public class ImageController {
         }
 
         // Check if user didn't upload any .xliff file
-        if (body.getTransUnitList() == null) {
+        if (xliffOperations.getBody().getTransUnitList() == null && jsonOperations.getJson() == null) {
 
+            logger.error("Missing translation file");
             // Throw a Missing file exception if user didn't upload any .xliff file
-            throw new MissingXliffException();
+            throw new MissingTranslationException();
 
         } else {
-
             for (MultipartFile imageFile : imageFiles) {
                 if (imageOperations.getFileFormat(imageFile).equalsIgnoreCase(".png")) {
                     try {
