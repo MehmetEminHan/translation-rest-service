@@ -18,7 +18,7 @@ public class Comparison {
 
     @Column(name = "unmatched_words_file")
     @Convert(converter = ListToJsonConverter.class)
-    private List<String> UnmatchedWordsFromXliff;
+    private List<String> UnmatchedWordsFromFile;
 
     @Column(name = "unmatched_words_image")
     @Convert(converter = ListToJsonConverter.class)
@@ -32,7 +32,7 @@ public class Comparison {
     private String imageWords;
 
     @Transient
-    private List<?> xliffWords;
+    private List<?> fileWords;
 
     @Column(name = "image_linknum")
     private Integer imageLinknum;
@@ -43,7 +43,7 @@ public class Comparison {
     @Override
     public String toString() {
         return "Comparison{" +
-                "Unmatched Words From Xliff: " + UnmatchedWordsFromXliff +
+                "Unmatched Words From File: " + UnmatchedWordsFromFile +
                 ", Unmatched Words From Image: " + UnmatchedWordsFromImage +
                 ", Matched Words: " + MatchedWords +
                 '}';

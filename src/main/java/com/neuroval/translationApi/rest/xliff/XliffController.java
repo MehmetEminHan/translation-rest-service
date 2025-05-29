@@ -1,9 +1,6 @@
 package com.neuroval.translationApi.rest.xliff;
 
 import com.neuroval.translationApi.model.response.Response;
-import com.neuroval.translationApi.model.xliff.TransUnit;
-import com.neuroval.translationApi.model.xliff.xliff_1_2.TransUnit_1_2;
-import com.neuroval.translationApi.model.xliff.xliff_2_0.TransUnit_2_0;
 import com.neuroval.translationApi.services.exception.InvalidFileTypeException;
 import com.neuroval.translationApi.services.xliff.XliffOperations;
 import jakarta.transaction.Transactional;
@@ -20,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
 
 
 @RestController
@@ -33,11 +29,6 @@ public class XliffController {
     private XliffOperations xliffOperations;
 
     private Response response;
-    private String extractedText;
-    private String xliffFileNamespace;
-    private List<TransUnit> deserializedXliff;
-    private List<TransUnit_1_2> deserializedXliff_1_2;
-    private List<TransUnit_2_0> deserializedXliff_2_0;
     private static final Logger logger = LogManager.getLogger(XliffController.class);
 
     /**
@@ -70,11 +61,12 @@ public class XliffController {
 
             return response;
         } else {
-
             // Throw an Invalid File Type Exception if user try to upload file format different then .xliff
+            logger.error("Xliff file format is not supported! {}", file.getOriginalFilename());
             throw new InvalidFileTypeException(xliffOperations.getFileFormat(file));
         }
     }
+
 
     /**
      * Sends a POST request to check if the XLIFF endpoint is active and responsive.
