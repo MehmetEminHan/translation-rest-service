@@ -25,7 +25,7 @@ import java.util.List;
 public class ImageOperations {
 
     @Autowired
-    private Image image = new Image();
+    private Image image;
     @Autowired
     private Comparison comparison;
     @Autowired
@@ -125,6 +125,7 @@ public class ImageOperations {
      * @return
      */
     public String mapper(String text) {
+        image = new Image();
         image.setText(text);
         logger.info("Extracted text deserialized to imageText:", image.getText());
         return image.getText();
