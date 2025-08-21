@@ -1,4 +1,4 @@
-# Java Language Translation Rest Service
+# Java Translation Rest Service
 
 ## Project Overview
 
