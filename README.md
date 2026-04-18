@@ -1,4 +1,4 @@
-# Java Language Translation Rest Service
+# Java Translation Rest Service
 
 ## Project Overview
 
@@ -62,6 +62,9 @@ translationApi/
   call the entities that we define as fields within the Services.
 - The reason for doing this is that @Autowired is a singleton pattern. Since @Autowired keeps the same entity in RAM
   each time, the Hibernate can't save the entities as a different row.
+<<<<<<< HEAD
 
 ## Database Diagram
 ![diagram.png](src/main/resources/diagram.png)
+=======
+
